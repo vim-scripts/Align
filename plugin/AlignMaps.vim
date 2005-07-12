@@ -1,7 +1,7 @@
 " AlignMaps:   Alignment maps based upon <Align.vim>
 " Maintainer:  Dr. Charles E. Campbell, Jr. <Charles.Campbell@gsfc.nasa.gov>
-" Last Change: Apr 15, 2005
-" Version:     31
+" Last Change: Jul 12, 2005
+" Version:     32
 " License:     GPL (Gnu Public License)
 "
 " NOTE: the code herein needs vim 6.0 or later
@@ -19,13 +19,18 @@
 " specify that the maps start how he or she prefers.
 "
 " Note: these maps all use <Align.vim>.
+"
+" Romans 1:20 For the invisible things of Him since the creation of the {{{1
+" world are clearly seen, being perceived through the things that are
+" made, even His everlasting power and divinity; that they may be
+" without excuse.
 " ---------------------------------------------------------------------
 
 " Load Once: {{{1
 if exists("g:loaded_alignmaps") || &cp
  finish
 endif
-let g:loaded_alignmaps = "v31"
+let g:loaded_alignmaps = "v32"
 let s:keepcpo          = &cpo
 set cpo&vim
 
@@ -35,12 +40,12 @@ set cpo&vim
 if !hasmapto('<Plug>WrapperStart')
  nmap <unique> <SID>WS	<Plug>AlignMapsWrapperStart
 endif
-nmap <silent> <script> <Plug>AlignMapsWrapperStart	:set lz<CR>:call <SID>WrapperStart()<CR>
+nmap <silent> <script> <Plug>AlignMapsWrapperStart	:set lz<CR>:call AlignWrapperStart()<CR>
 
 " ---------------------------------------------------------------------
-" WrapperStart: {{{1
-fun! s:WrapperStart()
-"  call Dfunc("WrapperStart()")
+" AlignWrapperStart: {{{1
+fun! AlignWrapperStart()
+"  call Dfunc("AlignWrapperStart()")
 
   if !exists("s:alignmaps_wrapcnt") || s:alignmaps_wrapcnt <= 0
 "   call Decho("wrapper initialization")
@@ -78,11 +83,11 @@ endfun
 if !hasmapto('<Plug>WrapperEnd')
  nmap <unique> <SID>WE	<Plug>AlignMapsWrapperEnd
 endif
-nmap <silent> <script> <Plug>AlignMapsWrapperEnd	:call <SID>WrapperEnd()<CR>:set nolz<CR>
+nmap <silent> <script> <Plug>AlignMapsWrapperEnd	:call AlignWrapperEnd()<CR>:set nolz<CR>
 
 " ---------------------------------------------------------------------
-" WrapperEnd:	{{{1
-fun! s:WrapperEnd()
+" AlignWrapperEnd:	{{{1
+fun! AlignWrapperEnd()
 "  call Dfunc("WrapperEnd() alignmaps_wrapcnt=".s:alignmaps_wrapcnt." my=".line("'y")." mz=".line("'z"))
 
   " remove trailing white space introduced by whatever in the modification zone
@@ -139,7 +144,7 @@ map <silent> <Leader>acom  <SID>WS:'a,.s/\/[*/]\*\=/@&@/e<CR>:'a,.s/\*\//@&/e<CR
 map <silent> <Leader>adcom <SID>WS:'a,.v/^\s*\/[/*]/s/\/[*/]\*\=/@&@/e<CR>:'a,.v/^\s*\/[/*]/s/\*\//@&/e<CR>:'y,'zv/^\s*\/[/*]/s/^\( *\) @/\1@/e<CR>'zk<Leader>tdW@:'y,'zv/^\s*\/[/*]/s/^\(\s*\) @/\1/e<CR>:'y,'zs/ @//eg<CR><SID>WE
 map <silent> <Leader>aocom :AlignPush<CR>:AlignCtrl g /[*/]<CR><Leader>acom:AlignPop<CR>
 map <silent> <Leader>ascom <SID>WS:'a,.s/\/[*/]/@&@/e<CR>:'a,.s/\*\//@&/e<CR>:silent! 'a,.g/^\s*@\/[*/]/s/@//ge<CR>:AlignCtrl v ^\s*\/[*/]<CR>:AlignCtrl g \/[*/]<CR>'zk<Leader>tW@:'y,'zs/^\(\s*\) @/\1/e<CR>:'y,'zs/ @//eg<CR><SID>WE
-map <silent> <Leader>adec  <SID>WS:'a,'zs/\([^ \t/(]\)\([*&]\)/\1 \2/e<CR>:'y,'zv/^\//s/\([^ \t]\)\s\+/\1 /ge<CR>:'y,'zv/^\s*[*/]/s/\([^/][*&]\)\s\+/\1/ge<CR>:'y,'zv/^\s*[*/]/s/^\(\s*\%(\h\w*\s\+\%([a-zA-Z_*(&]\)\@=\)\+\)\([*(&]*\)\s*\([a-zA-Z0-9_()]\+\)\s*\(\(\[.\{-}]\)*\)\s*\(=\)\=\s*\(.\{-}\)\=\s*;/\1@\2#@\3\4@\6@\7;@/e<CR>:'y,'zv/^\s*[*/]/s/\*\/\s*$/@*\//e<CR>:'y,'zv/^\s*[*/]/s/^\s\+\*/@@@@@* /e<CR>:'y,'zv/^\s*[*/]/s/^@@@@@\*\(.*[^*/]\)$/&@*/e<CR>'yjma'zk:AlignCtrl v ^\s*[*/#]<CR><Leader>t@:'y,'zv/^\s*[*/]/s/@ //ge<CR>:'y,'zv/^\s*[*/]/s/\(\s*\);/;\1/e<CR>:'y,'zv/^#/s/# //e<CR>:'y,'zv/^\s\+[*/#]/s/\([^/*]\)\(\*\+\)\( \+\)/\1\3\2/e<CR>:'y,'zv/^\s\+[*/#]/s/\((\+\)\( \+\)\*/\2\1*/e<CR>:'y,'zv/^\s\+[*/#]/s/^\(\s\+\) \*/\1*/e<CR>:'y,'zv/^\s\+[*/#]/s/[ \t@]*$//e<CR>:'y,'zs/^[*]/ */e<CR><SID>WE
+map <silent> <Leader>adec  <SID>WS:'a,'zs/\([^ \t/(]\)\([*&]\)/\1 \2/e<CR>:'y,'zv/^\//s/\([^ \t]\)\s\+/\1 /ge<CR>:'y,'zv/^\s*[*/]/s/\([^/][*&]\)\s\+/\1/ge<CR>:'y,'zv/^\s*[*/]/s/^\(\s*\%(\K\k*\s\+\%([a-zA-Z_*(&]\)\@=\)\+\)\([*(&]*\)\s*\([a-zA-Z0-9_()]\+\)\s*\(\(\[.\{-}]\)*\)\s*\(=\)\=\s*\(.\{-}\)\=\s*;/\1@\2#@\3\4@\6@\7;@/e<CR>:'y,'zv/^\s*[*/]/s/\*\/\s*$/@*\//e<CR>:'y,'zv/^\s*[*/]/s/^\s\+\*/@@@@@* /e<CR>:'y,'zv/^\s*[*/]/s/^@@@@@\*\(.*[^*/]\)$/&@*/e<CR>'yjma'zk:AlignCtrl v ^\s*[*/#]<CR><Leader>t@:'y,'zv/^\s*[*/]/s/@ //ge<CR>:'y,'zv/^\s*[*/]/s/\(\s*\);/;\1/e<CR>:'y,'zv/^#/s/# //e<CR>:'y,'zv/^\s\+[*/#]/s/\([^/*]\)\(\*\+\)\( \+\)/\1\3\2/e<CR>:'y,'zv/^\s\+[*/#]/s/\((\+\)\( \+\)\*/\2\1*/e<CR>:'y,'zv/^\s\+[*/#]/s/^\(\s\+\) \*/\1*/e<CR>:'y,'zv/^\s\+[*/#]/s/[ \t@]*$//e<CR>:'y,'zs/^[*]/ */e<CR><SID>WE
 map <silent> <Leader>adef  <SID>WS:AlignPush<CR>:AlignCtrl v ^\s*\(\/\*\<bar>\/\/\)<CR>:'a,.v/^\s*\(\/\*\<bar>\/\/\)/s/^\(\s*\)#\(\s\)*define\s*\(\I[a-zA-Z_0-9(),]*\)\s*\(.\{-}\)\($\<Bar>\/\*\)/#\1\2define @\3@\4@\5/e<CR>:'a,.v/^\s*\(\/\*\<bar>\/\/\)/s/\($\<Bar>\*\/\)/@&/e<CR>'zk<Leader>t@'yjma'zk:'a,.v/^\s*\(\/\*\<bar>\/\/\)/s/ @//g<CR><SID>WE
 map <silent> <Leader>afnc  :set lz<CR>:silent call <SID>Afnc()<CR>:set nolz<CR>
 if exists("g:alignmaps_usanumber")
@@ -356,7 +361,7 @@ fun! <SID>Afnc()
   sil! 'y+1,'zv/^\//s/\* \+/*/ge
   "                                                 func
   "                    ws  <- declaration   ->    <-ptr  ->   <-var->    <-[array][]    ->   <-glop->      <-end->
-  sil! 'y+1,'zv/^\//s/^\s*\(\(\w\+\s*\)\+\)\s\+\([(*]*\)\s*\(\w\+\)\s*\(\(\[.\{-}]\)*\)\s*\(.\{-}\)\=\s*\([,)]\)\s*$/  \1@#\3@\4\5@\7\8/e
+  sil! 'y+1,'zv/^\//s/^\s*\(\(\K\k*\s*\)\+\)\s\+\([(*]*\)\s*\(\K\k*\)\s*\(\(\[.\{-}]\)*\)\s*\(.\{-}\)\=\s*\([,)]\)\s*$/  \1@#\3@\4\5@\7\8/e
   sil! 'y+1,'z+1g/^\s*\/[*/]/norm! kJ
   sil! 'y+1,'z+1s%/[*/]%@&@%ge
   sil! 'y+1,'z+1s%*/%@&%ge

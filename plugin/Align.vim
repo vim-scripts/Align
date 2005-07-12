@@ -1,12 +1,12 @@
 " Align: tool to align multiple fields based on one or more separators
 "   Author:		Charles E. Campbell, Jr.
-"   Date:		Apr 15, 2005
+"   Date:		Jul 12, 2005
 "   Version:	27
 "   License:	GPL (Gnu Public License)
 " GetLatestVimScripts: 294 1 :AutoInstall: Align.vim
 " GetLatestVimScripts: 1066 1 cecutil.vim
 "
-"   Usage: Functions: {{{1
+"   Usage: Functions {{{1
 "   AlignCtrl(style,..list..)
 "
 "        "default" : Sets AlignCtrl to its default values and clears stack
@@ -78,6 +78,11 @@
 "                              visual-selection as well as the usual
 "                              [range] specification.  The ..list..
 "                              is a list of alignment separators.
+"
+" Romans 1:16,17a : For I am not ashamed of the gospel of Christ, for it is {{{1
+" the power of God for salvation for everyone who believes; for the Jew first,
+" and also for the Greek.  For in it is revealed God's righteousness from
+" faith to faith.
 
 " ---------------------------------------------------------------------
 " Load Once: {{{1
