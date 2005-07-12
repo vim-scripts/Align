@@ -1113,6 +1113,8 @@ ALIGNMENT MAPS				*alignmaps* *align-maps* *alignmap*
 4. Alignment Tool History					*align-history*
 
 ALIGN HISTORY
+	27 : Apr 15, 2005 : cpo workaround
+	                    ignorecase workaround
 	26 : Aug 20, 2004 : loaded_align now also indicates version number
 	                    GetLatestVimScripts :AutoInstall: now supported
 	25 : Jul 27, 2004 : For debugging, uses Dfunc(), Dret(), and Decho()
@@ -1158,6 +1160,10 @@ ALIGN HISTORY
 	 9 : Jun 25, 2002 : implemented cyclic padding
 
 ALIGNMENT MAP HISTORY					*alignmap-history*
+	32  : Jun 28, 2005 : * s:WrapperStart() changed to AlignWrapperStart()
+			       s:WrapperEnd() changed to AlignWrapperEnd()
+			       These changes let the AlignWrapper...()s to be used
+			       outside of AlignMaps.vim
 	31  : Feb 01, 2005 : * \adcom included, with help
 			     * \a, now works across multiple lines with different
 			       types
