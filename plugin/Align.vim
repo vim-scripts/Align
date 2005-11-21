@@ -1,10 +1,18 @@
 " Align: tool to align multiple fields based on one or more separators
 "   Author:		Charles E. Campbell, Jr.
-"   Date:		Jul 12, 2005
-"   Version:	27
-"   License:	GPL (Gnu Public License)
+"   Date:		Nov 21, 2005
+"   Version:	28
 " GetLatestVimScripts: 294 1 :AutoInstall: Align.vim
 " GetLatestVimScripts: 1066 1 cecutil.vim
+" Copyright:    Copyright (C) 1999-2005 Charles E. Campbell, Jr. {{{1
+"               Permission is hereby granted to use and distribute this code,
+"               with or without modifications, provided that this copyright
+"               notice is copied with it. Like anything else that's free,
+"               Align.vim is provided *as is* and comes with no warranty
+"               of any kind, either expressed or implied. By using this
+"               plugin, you agree that in no event will the copyright
+"               holder be liable for any damages resulting from the use
+"               of this software.
 "
 "   Usage: Functions {{{1
 "   AlignCtrl(style,..list..)
@@ -89,7 +97,7 @@
 if exists("g:loaded_align") || &cp
  finish
 endif
-let g:loaded_align = "v27"
+let g:loaded_align = "v28"
 let s:keepcpo      = &cpo
 set cpo&vim
 
@@ -392,12 +400,15 @@ fun! Align(...) range
   " record current search pattern for subsequent restoration
   let keep_search= @/
   let keep_ic    = &ic
-  set noic
+  let keep_report= &report
+  set noic report=10000
 
   " Align will accept a list of separator regexps
   if a:0 > 0
+"   call Decho("a:0=".a:0.": accepting list of separator regexp")
+
    if s:AlignCtrl =~# "="
-"   call Decho("AlignCtrl: record list of alignment patterns")
+"    call Decho("AlignCtrl: record list of alignment patterns")
     let s:AlignCtrl  = '='
     let s:AlignPat_1 = a:1
     let s:AlignPatQty= 1
@@ -467,7 +478,7 @@ fun! Align(...) range
   if begcol <= 0 && s:AlignLeadKeep == 'I'
    " retain first leading whitespace for all subsequent lines
    let bgntxt= substitute(getline(begline),'^\(\s*\).\{-}$','\1','')
-"   call Decho("retaining 1st leading ws: bgntxt<".bgntxt.">")
+"   call Decho("retaining 1st leading whitespace: bgntxt<".bgntxt.">")
    set noet
   endif
   exe begline.",".endline."ret"
@@ -554,6 +565,7 @@ fun! Align(...) range
 	let alignsep    = s:AlignSep
 	let alignophold = " "
 	let alignop     = "l"
+"	call Decho("initial alignstyle<".alignstyle."> seppat<".seppat.">")
 
     " Process each field on the line
     while doend > 0
@@ -561,7 +573,7 @@ fun! Align(...) range
 	  " C-style: cycle through pattern(s)
      if s:AlignCtrl == 'C' && doend == 1
 	  let seppat   = s:AlignPat_{ipat}
-"	  call Decho("AlignCtrl=".s:AlignCtrl." ipat=".ipat." seppat<".seppat.">")
+"	  call Decho("processing field: AlignCtrl=".s:AlignCtrl." ipat=".ipat." seppat<".seppat.">")
 	  let ipat     = ipat + 1
 	  if ipat > s:AlignPatQty
 	   let ipat = 1
@@ -576,7 +588,7 @@ fun! Align(...) range
 	 else
 	  let alignstyle   = strpart(alignstyle,1).strpart(alignstyle,0,1)
 	  let alignopnxt   = strpart(alignstyle,0,1)
-	  if alignopnxt == ':'
+	  if alignop == ':'
 	   let seppat  = '$'
 	   let doend   = 2
 "	   call Decho("alignop<:> case: setting seppat<$> doend==2")
@@ -736,8 +748,10 @@ fun! Align(...) range
   endif
 
   " restore current search pattern
-  let @/ = keep_search
-  let &ic= keep_ic
+  let @/      = keep_search
+  let &ic     = keep_ic
+  let &report = keep_report
+
 "  call Dret("Align")
   return
 endfun
