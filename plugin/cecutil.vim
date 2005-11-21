@@ -1,8 +1,8 @@
 " cecutil.vim : save/restore window position
 "               save/restore mark position
 "  Author:	Charles E. Campbell, Jr.
-"  Version:	9	ASTRO-ONLY
-"  Date:	Jun 02, 2005
+"  Version:	10a	ASTRO-ONLY
+"  Date:	Aug 12, 2005
 "
 "  Saving Restoring Destroying Marks: {{{1
 "       call SaveMark(markname)       let savemark= SaveMark(markname)
@@ -18,12 +18,16 @@
 "       commands: SWP RWP
 "
 " GetLatestVimScripts: 1066 1 :AutoInstall: cecutil.vim
+"
+" You believe that God is one. You do well. The demons also {{{1
+" believe, and shudder. But do you want to know, vain man, that
+" faith apart from works is dead?  (James 2:19,20 WEB)
 
 " usual multi-load preventive {{{1
 if &cp || exists("g:loaded_cecutil")
  finish
 endif
-let g:loaded_cecutil = "v9"
+let g:loaded_cecutil = "v10a"
 let s:keepcpo        = &cpo
 set cpo&vim
 "DechoMsgOn
@@ -66,11 +70,10 @@ fun! SaveWinPosn(...)
   if swwline > 0
    let savedposn= savedposn.":silent norm! ".swwline."\<c-y>\<cr>"
   endif
-  let savedposn = savedposn.":silent call cursor(".swline.",".swcol.")\<cr>"
-"  let savedposn = savedposn.":silent! norm! zO\<cr>"
   if swwcol > 0
-   let savedposn= savedposn.":silent norm! ".swwcol."zl\<cr>"
+   let savedposn= savedposn.":silent norm! 0".swwcol."zl\<cr>"
   endif
+  let savedposn = savedposn.":silent call cursor(".swline.",".swcol.")\<cr>"
 
   " save window position in
   " b:winposn_{iwinposn} (stack)

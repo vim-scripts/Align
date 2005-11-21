@@ -1,12 +1,20 @@
 " AlignMaps:   Alignment maps based upon <Align.vim>
 " Maintainer:  Dr. Charles E. Campbell, Jr. <Charles.Campbell@gsfc.nasa.gov>
-" Last Change: Jul 12, 2005
-" Version:     32
-" License:     GPL (Gnu Public License)
+" Date:        Nov 21, 2005
+" Version:     33
 "
 " NOTE: the code herein needs vim 6.0 or later
 "                       needs <Align.vim> v6 or later
 "                       needs <cecutil.vim> v5 or later
+" Copyright:    Copyright (C) 1999-2005 Charles E. Campbell, Jr. {{{1
+"               Permission is hereby granted to use and distribute this code,
+"               with or without modifications, provided that this copyright
+"               notice is copied with it. Like anything else that's free,
+"               AlignMaps.vim is provided *as is* and comes with no warranty
+"               of any kind, either expressed or implied. By using this
+"               plugin, you agree that in no event will the copyright
+"               holder be liable for any damages resulting from the use
+"               of this software.
 "
 " Usage: {{{1
 " Use 'a to mark beginning of to-be-aligned region,   Alternative:  use v
@@ -30,7 +38,7 @@
 if exists("g:loaded_alignmaps") || &cp
  finish
 endif
-let g:loaded_alignmaps = "v32"
+let g:loaded_alignmaps = "v33"
 let s:keepcpo          = &cpo
 set cpo&vim
 
@@ -182,19 +190,19 @@ map <silent> <Leader>T~   <SID>WS:AlignCtrl mIp0P0=r ~<CR>:'a,.Align<CR>:'y,'zs/
 map <silent> <Leader>t| <SID>WS:AlignCtrl mIp0P0=l <Bar><CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>t#   <SID>WS:AlignCtrl mIp0P0=l #<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>t,   <SID>WS:AlignCtrl mIp0P1=l ,<CR>:'a,.Align<CR><SID>WE
-map <silent> <Leader>ts,  <SID>WS:AlignCtrl mIp0P0=l ,<CR>:'a,.Align<CR>:'a,.s/\(\s*\),/,\1/ge<CR><SID>WE
+map <silent> <Leader>ts,  <SID>WS:AlignCtrl mIp0P1=l ,<CR>:'a,.Align<CR>:'a,.s/\(\s*\),/,\1/ge<CR><SID>WE
 map <silent> <Leader>t:   <SID>WS:AlignCtrl mIp1P1=l :<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>t;   <SID>WS:AlignCtrl mIp0P0=l ;<CR>:'a,.Align<CR>:.,'zs/ \( *\);/;\1/ge<CR><SID>WE
 map <silent> <Leader>t<   <SID>WS:AlignCtrl mIp0P0=l <<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>t=   <SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zs@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zs/==/``/ge<CR>:'a,'zs/!=/!`/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1s/\( \+\);/;\1/ge<CR>:'a,'z-1v/^\s*\/[*/]/s/\/[*/]/@&@/e<CR>:'a,'z-1v/^\s*\/[*/]/s/\*\//@&/e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1s/`/=/ge<CR>:'y,'zs/ @//eg<CR><SID>WE
-map <silent> <Leader>m=   <SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zs@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zs/==/``/ge<CR>:'a,'zs/!=/!`/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1s/\( \+\);/;\1/ge<CR>:'a,'z-s/%\ze[^=]/ @%@ /e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1s/`/=/ge<CR>:'y,'zs/ @//eg<CR><SID>WE
 map <silent> <Leader>t?   <SID>WS:AlignCtrl mIp0P0=l ?<CR>:'a,.Align<CR>:.,'zs/ \( *\);/;\1/ge<CR><SID>WE
+map <silent> <Leader>t~   <SID>WS:AlignCtrl mIp0P0=l ~<CR>:'a,.Align<CR>:'y,'zs/ \( *\);/;\1/ge<CR><SID>WE
+map <silent> <Leader>m=   <SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zs@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zs/==/``/ge<CR>:'a,'zs/!=/!`/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1s/\( \+\);/;\1/ge<CR>:'a,'z-s/%\ze[^=]/ @%@ /e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1s/`/=/ge<CR>:'y,'zs/ @//eg<CR><SID>WE
 map <silent> <Leader>tab  <SID>WS:'a,.s/^\(\t*\)\(.*\)/\=submatch(1).escape(substitute(submatch(2),'\t','@','g'),'\')/<CR>:AlignCtrl mI=l @<CR>:'a,.Align<CR>:'y+1,'z-1s/@/ /g<CR><SID>WE
+map <silent> <Leader>tml  <SID>WS:AlignCtrl mWp1P0=l \\\@<!\\\s*$<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>tsp  <SID>WS:'a,.s/^\(\s*\)\(.*\)/\=submatch(1).escape(substitute(submatch(2),'\s\+','@','g'),'\')/<CR>:AlignCtrl mI=lp0P0 @<CR>:'a,.Align<CR>:'y+1,'z-1s/@/ /g<CR><SID>WE
 map <silent> <Leader>tsq  <SID>WS:'a,.ReplaceQuotedSpaces<CR>:'a,.s/^\(\s*\)\(.*\)/\=submatch(1).substitute(submatch(2),'\s\+','@','g')/<CR>:AlignCtrl mIp0P0=l @<CR>:'a,.Align<CR>:'y+1,'z-1s/[%@]/ /g<CR><SID>WE
 map <silent> <Leader>tt   <SID>WS:AlignCtrl mIp1P1=l \\\@<!& \\\\<CR>:'a,.Align<CR><SID>WE
-map <silent> <Leader>t~   <SID>WS:AlignCtrl mIp0P0=l ~<CR>:'a,.Align<CR>:'y,'zs/ \( *\);/;\1/ge<CR><SID>WE
-map <silent> <Leader>tml  <SID>WS:AlignCtrl mWp1P0=l \\\@<!\\\s*$<CR>:'a,.Align<CR><SID>WE
 
 " ---------------------------------------------------------------------
 " plain Align maps; these two are used in <Leader>acom..\afnc	{{{1

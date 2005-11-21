@@ -1,7 +1,11 @@
-*align.txt*	The Alignment Tool			Apr 11, 2005
+*align.txt*	The Alignment Tool			Oct 12, 2005
 
 Author:  Charles E. Campbell, Jr.  <NdrOchip@ScampbellPfamily.AbizM>
 	  (remove NOSPAM from Campbell's email first)
+Copyright: (c) 2004-2005 by Charles E. Campbell, Jr.	*Align-copyright*
+           The VIM LICENSE applies to Align.vim, AlignMaps.vim, and Align.txt
+           (see |copyright|) except use "Align and AlignMaps" instead of "Vim"
+	   No warranty, express or implied.  Use At-Your-Own-Risk.
 
 ==============================================================================
 1. Contents					*align* *align-contents*
@@ -107,7 +111,7 @@ Author:  Charles E. Campbell, Jr.  <NdrOchip@ScampbellPfamily.AbizM>
  ||             +----+-------------------------------------------------------+|
  ||  More args  |  More arguments are interpreted as describing separators   ||
  ||             +------------------------------------------------------------+|
- ||   No args   |  AlignCtrl will display its current settings               || >
+ ||   No args   |  AlignCtrl will display its current settings               ||
  ||=============+============================================================+|
 <||[range]Align |   [..list-of-separators..]                                 ||
  ||             +------------------------------------------------------------+|
@@ -240,43 +244,43 @@ ALIGNMENT CONTROL				*alignctrl* *align-control*
 		lr  means lrlrlr....
 		llr means llrllr....
 
-	Example: Justification options: Align = >
-	+------------+-------------------+-------------------+-------------------+
-	|  Original  |  AlignCtrl l      | AlignCtrl r       | AlignCtrl lr      |
-	+------------+-------------------+-------------------+-------------------+
-	| a=bb=ccc=1 |a   = bb  = ccc = 1|  a =  bb = ccc = 1|a   =  bb = ccc = 1|
-	| ccc=a=bb=2 |ccc = a   = bb  = 2|ccc =   a =  bb = 2|ccc =   a = bb  = 2|
-	| dd=eee=f=3 |dd  = eee = f   = 3| dd = eee =   f = 3|dd  = eee = f   = 3|
-	+------------+-------------------+-------------------+-------------------+
-        | Alignment  |l     l     l     l|  r     r     r   r|l       r   l     r|
-	+------------+-------------------+-------------------+-------------------+
+     Example: Justification options: Align = >
+     +------------+-------------------+-------------------+-------------------+
+     |  Original  |  AlignCtrl l      | AlignCtrl r       | AlignCtrl lr      |
+     +------------+-------------------+-------------------+-------------------+
+     | a=bb=ccc=1 |a   = bb  = ccc = 1|  a =  bb = ccc = 1|a   =  bb = ccc = 1|
+     | ccc=a=bb=2 |ccc = a   = bb  = 2|ccc =   a =  bb = 2|ccc =   a = bb  = 2|
+     | dd=eee=f=3 |dd  = eee = f   = 3| dd = eee =   f = 3|dd  = eee = f   = 3|
+     +------------+-------------------+-------------------+-------------------+
+     | Alignment  |l     l     l     l|  r     r     r   r|l       r   l     r|
+     +------------+-------------------+-------------------+-------------------+
 <
-		AlignCtrl l : The = separator is repeatedly re-used, as the cycle
-			      only consists of one character (the "l").  Every
-			      time left-justification is used for fields.
-		AlignCtrl r : The = separator is repeatedly re-used, as the cycle
-			      only consists of one character (the "l").  Every
-			      time right-justification is used for fields.
-		AlignCtrl lr: Again, the "=" separator is repeatedly re-used, but
-			      the fields are justified alternately between left
-			      and right.
+		AlignCtrl l : The = separator is repeatedly re-used, as the
+			      cycle only consists of one character (the "l").
+			      Every time left-justification is used for fields.
+		AlignCtrl r : The = separator is repeatedly re-used, as the
+			      cycle only consists of one character (the "l").
+			      Every time right-justification is used for fields
+		AlignCtrl lr: Again, the "=" separator is repeatedly re-used,
+			      but the fields are justified alternately between
+			      left and right.
 
 	Even more separator control is available.  With "-+:":
 
-	    - : skip treating the separator as a separator.		*alignctrl--*
-	    + : repeat use of the last "lrc" justification		*alignctrl-+*
-	    : : treat the rest of the line as a single field		*alignctrl-:*
+	    - : skip treating the separator as a separator.	*alignctrl--*
+	    + : repeat use of the last "lrc" justification	*alignctrl-+*
+	    : : treat the rest of the line as a single field	*alignctrl-:*
 
-	Example: More justification options:  Align = >
-	+------------+---------------+--------------------+---------------+
-	|  Original  |  AlignCtrl -l | AlignCtrl rl+      | AlignCtrl l:  |
-	+------------+---------------+--------------------+---------------+
-        | a=bb=ccc=1 |a=bb   = ccc=1 |  a = bb  = ccc = 1 |a   = bb=ccc=1 |
-        | ccc=a=bb=2 |ccc=a  = bb=2  |ccc = a   = bb  = 2 |ccc = a=bb=2   |
-        | dd=eee=f=3 |dd=eee = f=3   | dd = eee = f   = 3 |dd  = eee=f=3  |
-	+------------+---------------+--------------------+---------------+
-        | Alignment  |l        l     |  r   l     l     l |l     l        |
-	+------------+---------------+--------------------+---------------+
+     Example: More justification options:  Align = >
+     +------------+---------------+--------------------+---------------+
+     |  Original  |  AlignCtrl -l | AlignCtrl rl+      | AlignCtrl l:  |
+     +------------+---------------+--------------------+---------------+
+     | a=bb=ccc=1 |a=bb   = ccc=1 |  a = bb  = ccc = 1 |a   = bb=ccc=1 |
+     | ccc=a=bb=2 |ccc=a  = bb=2  |ccc = a   = bb  = 2 |ccc = a=bb=2   |
+     | dd=eee=f=3 |dd=eee = f=3   | dd = eee = f   = 3 |dd  = eee=f=3  |
+     +------------+---------------+--------------------+---------------+
+     | Alignment  |l        l     |  r   l     l     l |l     l        |
+     +------------+---------------+--------------------+---------------+
 <
 	In the first example in "More justification options":
 
@@ -284,16 +288,16 @@ ALIGNMENT CONTROL				*alignctrl* *align-control*
 	  and so "a=bb", "ccc=a", and "dd=eee" are considered as single fields.
          
 	  The next "=" separator has its (left side) field left-justified.
-	  Due to the cyclic nature of separator patterns, the "-l" specification
-	  is equivalent to "-l-l-l ...".
+	  Due to the cyclic nature of separator patterns, the "-l"
+	  specification is equivalent to "-l-l-l ...".
          
 	  Hence the next specification is a "skip", so "ccc=1", etc are fields.
 
 	In the second example in "More justification options":
 
-	  The first field is right-justified, the second field is left justified,
-	  and all remaining fields repeat the last justification command
-	  (ie. they are left justified, too).
+	  The first field is right-justified, the second field is left
+	  justified, and all remaining fields repeat the last justification
+	  command (ie. they are left justified, too).
 
 	  Hence rl+ is equivalent to         rlllllllll ...
 	  (whereas plain rl is equivalent to rlrlrlrlrl ... ).
@@ -602,7 +606,7 @@ ALIGNMENT						*align-align*
 	The whitespace on either side of a separator is ignored.
 
 
-ALIGNMENT MAPS				*alignmaps* *align-maps* *alignmap*
+ALIGNMENT MAPS				*alignmaps* *align-maps*
 
 	There are a number of maps using AlignCtrl() and Align()
 	in the <AlignMaps.vim> file.  This file may also be put
@@ -642,17 +646,24 @@ ALIGNMENT MAPS				*alignmaps* *align-maps* *alignmap*
 	          used to continue lines (shell programming, etc)
 	  \tsp  : use Align to make a table separated by blanks	|alignmap-tsp|
 	          (left justified)
+	  \ts,  : like \t, but swaps whitespace on the right of *alignmap-ts,*
+	          the commas to their left
 	  \Tsp  : use Align to make a table separated by blanks	|alignmap-Tsp|
 	          (right justified)
 	  \tsq  : use Align to make a table separated by blanks	|alignmap-tsq|
 	          (left justified) -- "strings" are not split up
 	  \tt   : useful for aligning LaTeX tabular tables	|alignmap-tt|
+	  \Htd  : tabularizes html tables:			|alignmap-Htd|
+	          <TR><TD> ...field... </TD><TD> ...field... </TD></TR>
+
+		  *alignmap-t|* *alignmap-t#* *alignmap-t,* *alignmap-t:*
+		  *alignmap-t;* *alignmap-t<* *alignmap-t?* *alignmap-t~*
+		  *alignmap-m=*
 	  \tx   : make a left-justified  alignment on
 	          character "x" where "x" is: ,:<=@|#		|alignmap-t=|
 	  \Tx   : make a right-justified alignment on
 	          character "x" where "x" is: ,:<=@#		|alignmap-T=|
-	  \Htd  : tabularizes html tables:			|alignmap-Htd|
-	          <TR><TD> ...field... </TD><TD> ...field... </TD></TR>
+	  \m=   : like \t= but aligns with %... style comments
 
 	The leading backslash is actually <leader> (see |mapleader|
 	for how to customize the leader to be whatever you like).
@@ -765,7 +776,7 @@ ALIGNMENT MAPS				*alignmaps* *align-maps* *alignmap*
 	Alignment Map Examples: \acom				*alignmap-acom*
 	---------------------------
 
-	Original: illustrates how to align C-style comments (works for //, too) >
+	Original: illustrates aligning C-style comments (works for //, too) >
 		if(itworks) { /* this */
 			then= dothis; /* is a */
 			} /* set of three comments */
@@ -1113,6 +1124,8 @@ ALIGNMENT MAPS				*alignmaps* *align-maps* *alignmap*
 4. Alignment Tool History					*align-history*
 
 ALIGN HISTORY
+	28 : Aug 17, 2005 * report option workaround
+	     Oct 24, 2005 * AlignCtrl l:  wasn't behaving as expected; fixed
 	27 : Apr 15, 2005 : cpo workaround
 	                    ignorecase workaround
 	26 : Aug 20, 2004 : loaded_align now also indicates version number
@@ -1142,8 +1155,9 @@ ALIGN HISTORY
 	15 : Aug 22, 2002 : bug fix: AlignCtrl's ":" now acts as a modifier of
 	                             the preceding alignment operator (lrc)
 	14 : Aug 20, 2002 : bug fix: AlignCtrl default now keeps &ic unchanged
-	                    bug fix: Align, on end-field, wasn't using correct alignop
-	                    bug fix: Align, on end-field, was appending padding
+	                    bug fix: Align, on end-field, wasn't using correct
+	                    alignop bug fix: Align, on end-field, was appending
+			    padding
 	13 : Aug 19, 2002 : bug fix: zero-length g/v patterns are accepted
 	                    bug fix: always skip blank lines
 	                    bug fix: AlignCtrl default now also clears g and v
@@ -1160,24 +1174,25 @@ ALIGN HISTORY
 	 9 : Jun 25, 2002 : implemented cyclic padding
 
 ALIGNMENT MAP HISTORY					*alignmap-history*
+	33  : Oct 12, 2005 : * \ts, now uses P1 in its AlignCtrl call
 	32  : Jun 28, 2005 : * s:WrapperStart() changed to AlignWrapperStart()
 			       s:WrapperEnd() changed to AlignWrapperEnd()
-			       These changes let the AlignWrapper...()s to be used
-			       outside of AlignMaps.vim
+			       These changes let the AlignWrapper...()s to be
+			       used outside of AlignMaps.vim
 	31  : Feb 01, 2005 : * \adcom included, with help
-			     * \a, now works across multiple lines with different
-			       types
+			     * \a, now works across multiple lines with
+			       different types
 			     * AlignMaps now uses <cecutil.vim> for its mark and
 			       window-position saving and restoration
 	      Mar 04, 2005   * improved \a,
 	      Apr 06, 2005   * included \aenum, \aunum, and provided
 			       g:alignmaps_{usa|euro]number} options
-	30  : Aug 20, 2004 : * \a, : now handles embedded assignments and does \adec
+	30  : Aug 20, 2004 : * \a, : handles embedded assignments and does \adec
 			     * \acom  now can handle Doxygen-style comments
 	                     * g:loaded_alignmaps now also indicates version
 	                     * internal maps \WE and \WS are now re-entrant
-	29  : Jul 27, 2004 : * \tml aligns trailing multi-line single backslashes
-	                       (thanks to Raul Benavente!)
+	29  : Jul 27, 2004 : * \tml aligns trailing multi-line single
+	                       backslashes (thanks to Raul Benavente!)
 	28  : May 13, 2004 : * \a, had problems with leading blanks; fixed!
 	27  : Mar 31, 2004 : * \T= was having problems with == and !=
 	                     * Fixed more problems with \adec
@@ -1190,23 +1205,23 @@ ALIGNMENT MAP HISTORY					*alignmap-history*
 	                       spaces with commas)
 	                     * \adec ignores preprocessor lines and lines with
 	                       with comments-only
-	23  : Sep 10, 2003 : * fixed bug in \afnc.  No longer overwrites marks y,z
+	23  : Sep 10, 2003 : * Bugfix for \afnc - no longer overwrites marks y,z
 	                     * fixed bug in \tsp, \tab, \Tsp, and \Tab - lines
 	                       containing backslashes were having their
-	                       backslashes
-	                       removed.  Included Leif Wickland's patch for \tsq.
+	                       backslashes removed.  Included Leif Wickland's
+	                       patch for \tsq.
 	                     * \adef now ignores lines holding comments only
 	18  : Aug 22, 2003 :   \a< lines up C++'s << operators
 	                       saves/restores gdefault option (sets to nogd)
 	                       all b:..varname.. are now b:alignmaps_..varname..
-	17  : Nov 04, 2002 :   \afnc now handles // comments correctly and commas
-	                       within comments
+	17  : Nov 04, 2002 :   \afnc now handles // comments correctly and
+	                       commas within comments
 	16  : Sep 10, 2002 :   changed : to :silent! for \adec
 	15  : Aug 27, 2002 :   removed some <c-v>s
 	14  : Aug 20, 2002 :   \WS, \WE mostly moved to functions, marks y and z
 	                       now restored
 	11  : Jul 08, 2002 :   \abox bug fix
-	 9  : Jun 25, 2002 :   \abox modified to handle leading initial white space
+	 9  : Jun 25, 2002 :   \abox now handles leading initial whitespace
 	                   :   various bugfixes to \afnc, \T=, etc
 
 ==============================================================================
