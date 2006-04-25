@@ -1,8 +1,8 @@
-*align.txt*	The Alignment Tool			Oct 12, 2005
+*align.txt*	The Alignment Tool			Mar 20, 2006
 
 Author:  Charles E. Campbell, Jr.  <NdrOchip@ScampbellPfamily.AbizM>
 	  (remove NOSPAM from Campbell's email first)
-Copyright: (c) 2004-2005 by Charles E. Campbell, Jr.	*Align-copyright*
+Copyright: (c) 2004-2006 by Charles E. Campbell, Jr.	*Align-copyright*
            The VIM LICENSE applies to Align.vim, AlignMaps.vim, and Align.txt
            (see |copyright|) except use "Align and AlignMaps" instead of "Vim"
 	   No warranty, express or implied.  Use At-Your-Own-Risk.
@@ -47,7 +47,6 @@ Copyright: (c) 2004-2005 by Charles E. Campbell, Jr.	*Align-copyright*
 	4. Alignment Tool History...: |align-history|
 
 ==============================================================================
-
 2. Align Manual			*alignman* *alignmanual* *align-manual*
 
 	To Enable: put <Align.vim> and <AlignMaps.vim> into your .vim/plugin
@@ -63,7 +62,7 @@ Copyright: (c) 2004-2005 by Charles E. Campbell, Jr.	*Align-copyright*
  ||             |    +-------------------------------------------------------+|
  ||             |    |  may be called as a command or as a function:         ||
  ||             |    |  :AlignCtrl =lp0P0W & \\                              ||
- ||             |    |  :call AlignCtrl('=lp0P0W','&','\\')                  ||
+ ||             |    |  :call Align#AlignCtrl('=lp0P0W','&','\\')            ||
  ||             |    |                                                       ||
  ||             |    +-------------------------------------------------------++
  ||   1st arg   |  = | =  all separator patterns are equivalent and are      ||
@@ -121,12 +120,11 @@ Copyright: (c) 2004-2005 by Charles E. Campbell, Jr.	*Align-copyright*
  ||             |  as a command or as a function.                            ||
  ||             |   :[range]Align                                            ||
  ||             |   :[range]Align [list of separators]                       ||
- ||             |   :[range]call Align()                                     ||
- ||             |   :[range]call Align("list","of","separators",...)         ||
+ ||             |   :[range]call Align#Align()                               ||
+ ||             |   :[range]call Align#Align("list","of","separators",...)   ||
  \============================================================================/
 
 ==============================================================================
-
 3. Alignment Usage				*alignusage* *align-usage*
 
         The <Align.vim> script includes two primary commands and two
@@ -1120,10 +1118,12 @@ ALIGNMENT MAPS				*alignmaps* *align-maps*
 	  <TR><TD> ...field three... </TD><TD> ...field four... </TD></TR>
 <
 ==============================================================================
-
-4. Alignment Tool History					*align-history*
+4. Alignment Tool History				*align-history*
 
 ALIGN HISTORY
+	29 : Jan 18, 2006 * cecutil updated to use keepjumps
+	     Feb 23, 2006 * Align now converted to vim 7.0 style using
+	                    auto-loading functions.
 	28 : Aug 17, 2005 * report option workaround
 	     Oct 24, 2005 * AlignCtrl l:  wasn't behaving as expected; fixed
 	27 : Apr 15, 2005 : cpo workaround
@@ -1174,6 +1174,8 @@ ALIGN HISTORY
 	 9 : Jun 25, 2002 : implemented cyclic padding
 
 ALIGNMENT MAP HISTORY					*alignmap-history*
+	34  : Feb 23, 2006 : * AlignMaps now converted to vim 7.0 style using
+	                       auto-loading functions.
 	33  : Oct 12, 2005 : * \ts, now uses P1 in its AlignCtrl call
 	32  : Jun 28, 2005 : * s:WrapperStart() changed to AlignWrapperStart()
 			       s:WrapperEnd() changed to AlignWrapperEnd()
@@ -1225,4 +1227,4 @@ ALIGNMENT MAP HISTORY					*alignmap-history*
 	                   :   various bugfixes to \afnc, \T=, etc
 
 ==============================================================================
-vim:tw=78:ts=8:ft=help
+vim:tw=78:ts=8:ft=help:fdm=marker:
