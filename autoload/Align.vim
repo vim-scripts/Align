@@ -1,7 +1,7 @@
 " Align: tool to align multiple fields based on one or more separators
 "   Author:		Charles E. Campbell, Jr.
-"   Date:		Nov 21, 2005
-"   Version:	28
+"   Date:		Feb 23, 2006
+"   Version:	29d	ASTRO-ONLY
 " GetLatestVimScripts: 294 1 :AutoInstall: Align.vim
 " GetLatestVimScripts: 1066 1 cecutil.vim
 " Copyright:    Copyright (C) 1999-2005 Charles E. Campbell, Jr. {{{1
@@ -97,7 +97,7 @@
 if exists("g:loaded_align") || &cp
  finish
 endif
-let g:loaded_align = "v28"
+let g:loaded_align = "v29d"
 let s:keepcpo      = &cpo
 set cpo&vim
 
@@ -105,14 +105,6 @@ set cpo&vim
 "if !exists("g:loaded_Decho") "Decho
 " runtime plugin/Decho.vim
 "endif	" Decho
-
-" ---------------------------------------------------------------------
-" Public Interface: {{{1
-com! -range -nargs=* Align <line1>,<line2>call Align(<f-args>)
-com! -range -nargs=0 ReplaceQuotedSpaces <line1>,<line2>call ReplaceQuotedSpaces()
-com!        -nargs=* AlignCtrl call AlignCtrl(<f-args>)
-com!        -nargs=0 AlignPush call AlignPush()
-com!        -nargs=0 AlignPop  call AlignPop()
 
 " ---------------------------------------------------------------------
 
@@ -148,7 +140,7 @@ com!        -nargs=0 AlignPop  call AlignPop()
 "            <  s:AlignSep
 "            >  s:AlignSep
 "            |  s:AlignSep
-fun! AlignCtrl(...)
+fun! Align#AlignCtrl(...)
 
 "  call Dfunc("AlignCtrl()")
 
@@ -240,9 +232,9 @@ fun! AlignCtrl(...)
 	  unlet s:AlignCtrlStackQty
 	 endif
 	 " Set AlignCtrl to its default value
-     call AlignCtrl("Ilp1P1=<",'=')
-	 call AlignCtrl("g")
-	 call AlignCtrl("v")
+     call Align#AlignCtrl("Ilp1P1=<",'=')
+	 call Align#AlignCtrl("g")
+	 call Align#AlignCtrl("v")
 	 let &ic= keep_ic
 	 let @/ = keep_search
 "     call Dret("AlignCtrl")
@@ -252,7 +244,7 @@ fun! AlignCtrl(...)
    if style =~# 'm'
 	" map support: Do an AlignPush now and the next call to Align()
 	"              will do an AlignPop at exit
-	call AlignPush()
+	call Align#AlignPush()
 	let s:DoAlignPop= 1
    endif
 
@@ -369,7 +361,7 @@ endfun
 
 " ---------------------------------------------------------------------
 " MakeSpace: returns a string with spacecnt blanks {{{1
-fun! <SID>MakeSpace(spacecnt)
+fun! s:MakeSpace(spacecnt)
 "  call Dfunc("MakeSpace(spacecnt=".a:spacecnt.")")
   let str      = ""
   let spacecnt = a:spacecnt
@@ -383,7 +375,7 @@ endfun
 
 " ---------------------------------------------------------------------
 " Align: align selected text based on alignment pattern(s) {{{1
-fun! Align(...) range
+fun! Align#Align(...) range
 "  call Dfunc("Align()")
 
   " Check for bad separator patterns (zero-length matches)
@@ -743,7 +735,7 @@ fun! Align(...) range
 
   if exists("s:DoAlignPop")
    " AlignCtrl Map support
-   call AlignPop()
+   call Align#AlignPop()
    unlet s:DoAlignPop
   endif
 
@@ -758,7 +750,7 @@ endfun
 
 " ---------------------------------------------------------------------
 " AlignPush: this command/function pushes an alignment control string onto a stack {{{1
-fun! AlignPush()
+fun! Align#AlignPush()
 "  call Dfunc("AlignPush()")
 
   " initialize the stack
@@ -790,7 +782,7 @@ endfun
 " ---------------------------------------------------------------------
 " AlignPop: this command/function pops an alignment pattern from a stack {{1
 "           and into the AlignCtrl variables.
-fun! AlignPop()
+fun! Align#AlignPop()
 "  call Dfunc("AlignPop()")
 
   " sanity checks
@@ -809,21 +801,21 @@ fun! AlignPop()
   " pop top of AlignCtrlStack and pass value to AlignCtrl
   let retval=s:AlignCtrlStack_{s:AlignCtrlStackQty}
   unlet s:AlignCtrlStack_{s:AlignCtrlStackQty}
-  call AlignCtrl(retval)
+  call Align#AlignCtrl(retval)
 
   " pop G pattern stack
   if s:AlignGPat_{s:AlignCtrlStackQty} != ""
-   call AlignCtrl('g',s:AlignGPat_{s:AlignCtrlStackQty})
+   call Align#AlignCtrl('g',s:AlignGPat_{s:AlignCtrlStackQty})
   else
-   call AlignCtrl('g')
+   call Align#AlignCtrl('g')
   endif
   unlet s:AlignGPat_{s:AlignCtrlStackQty}
 
   " pop V pattern stack
   if s:AlignVPat_{s:AlignCtrlStackQty} != ""
-   call AlignCtrl('v',s:AlignVPat_{s:AlignCtrlStackQty})
+   call Align#AlignCtrl('v',s:AlignVPat_{s:AlignCtrlStackQty})
   else
-   call AlignCtrl('v')
+   call Align#AlignCtrl('v')
   endif
   unlet s:AlignVPat_{s:AlignCtrlStackQty}
 
@@ -834,9 +826,9 @@ fun! AlignPop()
 endfun
 
 " ---------------------------------------------------------------------
-" ReplaceQuotedSpaces: {{{1
-fun! ReplaceQuotedSpaces() 
-"  call Dfunc("ReplaceQuotedSpaces()")
+" AlignReplaceQuotedSpaces: {{{1
+fun! Align#AlignReplaceQuotedSpaces() 
+"  call Dfunc("AlignReplaceQuotedSpaces()")
 
   let l:line          = getline(line("."))
   let l:linelen       = strlen(l:line)
@@ -870,12 +862,12 @@ fun! ReplaceQuotedSpaces()
   endwhile
   call setline(line('.'), l:line)
 
-"  call Dret("ReplaceQuotedSpaces")
+"  call Dret("AlignReplaceQuotedSpaces")
 endfun
 
 " ---------------------------------------------------------------------
 " Set up default values: {{{1
-call AlignCtrl("default")
+call Align#AlignCtrl("default")
 
 " ---------------------------------------------------------------------
 "  Restore: {{{1

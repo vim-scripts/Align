@@ -1,7 +1,7 @@
 " AlignMaps:   Alignment maps based upon <Align.vim>
 " Maintainer:  Dr. Charles E. Campbell, Jr. <Charles.Campbell@gsfc.nasa.gov>
-" Date:        Nov 21, 2005
-" Version:     33
+" Date:        Feb 23, 2006
+" Version:     34c	ASTRO-ONLY
 "
 " NOTE: the code herein needs vim 6.0 or later
 "                       needs <Align.vim> v6 or later
@@ -38,7 +38,7 @@
 if exists("g:loaded_alignmaps") || &cp
  finish
 endif
-let g:loaded_alignmaps = "v33"
+let g:loaded_alignmaps = "v34c"
 let s:keepcpo          = &cpo
 set cpo&vim
 
@@ -67,7 +67,7 @@ fun! AlignWrapperStart()
    " set up fencepost blank lines
    put =''
    norm! mz'a
-   put! = ''
+   put! =''
    norm! my
    let s:alignmaps_zline      = line("'z")
    exe "'y,'zs/@/\177/ge"
@@ -80,9 +80,9 @@ fun! AlignWrapperStart()
   " change some settings to align-standard values
   set nogd
   set ch=2
-  call AlignPush()
+  AlignPush
   norm! 'zk
-"  call Dret("WrapperStart : alignmaps_wrapcnt=".s:alignmaps_wrapcnt." my=".line("'y")." mz=".line("'z"))
+"  call Dret("AlignWrapperStart : alignmaps_wrapcnt=".s:alignmaps_wrapcnt." my=".line("'y")." mz=".line("'z"))
 endfun
 
 " ---------------------------------------------------------------------
@@ -96,13 +96,13 @@ nmap <silent> <script> <Plug>AlignMapsWrapperEnd	:call AlignWrapperEnd()<CR>:set
 " ---------------------------------------------------------------------
 " AlignWrapperEnd:	{{{1
 fun! AlignWrapperEnd()
-"  call Dfunc("WrapperEnd() alignmaps_wrapcnt=".s:alignmaps_wrapcnt." my=".line("'y")." mz=".line("'z"))
+"  call Dfunc("AlignWrapperEnd() alignmaps_wrapcnt=".s:alignmaps_wrapcnt." my=".line("'y")." mz=".line("'z"))
 
   " remove trailing white space introduced by whatever in the modification zone
   'y,'zs/\s\+$//e
 
   " restore AlignCtrl settings
-  call AlignPop()
+  AlignPop
 
   let s:alignmaps_wrapcnt= s:alignmaps_wrapcnt - 1
   if s:alignmaps_wrapcnt <= 0
@@ -138,7 +138,7 @@ fun! AlignWrapperEnd()
    unlet s:alignmaps_posn
   endif
 
-"  call Dret("WrapperEnd : alignmaps_wrapcnt=".s:alignmaps_wrapcnt." my=".line("'y")." mz=".line("'z"))
+"  call Dret("AlignWrapperEnd : alignmaps_wrapcnt=".s:alignmaps_wrapcnt." my=".line("'y")." mz=".line("'z"))
 endfun
 
 " ---------------------------------------------------------------------
@@ -195,13 +195,14 @@ map <silent> <Leader>t:   <SID>WS:AlignCtrl mIp1P1=l :<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>t;   <SID>WS:AlignCtrl mIp0P0=l ;<CR>:'a,.Align<CR>:.,'zs/ \( *\);/;\1/ge<CR><SID>WE
 map <silent> <Leader>t<   <SID>WS:AlignCtrl mIp0P0=l <<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>t=   <SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zs@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zs/==/``/ge<CR>:'a,'zs/!=/!`/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1s/\( \+\);/;\1/ge<CR>:'a,'z-1v/^\s*\/[*/]/s/\/[*/]/@&@/e<CR>:'a,'z-1v/^\s*\/[*/]/s/\*\//@&/e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1s/`/=/ge<CR>:'y,'zs/ @//eg<CR><SID>WE
+map <silent> <Leader>w=   <SID>WS:'a,'zg/=/s/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zg/=/s@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zg/=/s/==/``/ge<CR>:'a,'zg/=/s/!=/!`/ge<CR>'zk:AlignCtrl mWp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1g/=/Align<CR>:'a,'z-1g/=/s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1g/=/s/\( \+\);/;\1/ge<CR>:'a,'z-1v/^\s*\/[*/]/s/\/[*/]/@&@/e<CR>:'a,'z-1v/^\s*\/[*/]/s/\*\//@&/e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1g/=/s/`/=/ge<CR>:'y,'zg/=/s/ @//eg<CR><SID>WE
 map <silent> <Leader>t?   <SID>WS:AlignCtrl mIp0P0=l ?<CR>:'a,.Align<CR>:.,'zs/ \( *\);/;\1/ge<CR><SID>WE
 map <silent> <Leader>t~   <SID>WS:AlignCtrl mIp0P0=l ~<CR>:'a,.Align<CR>:'y,'zs/ \( *\);/;\1/ge<CR><SID>WE
 map <silent> <Leader>m=   <SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zs@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zs/==/``/ge<CR>:'a,'zs/!=/!`/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1s/\( \+\);/;\1/ge<CR>:'a,'z-s/%\ze[^=]/ @%@ /e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1s/`/=/ge<CR>:'y,'zs/ @//eg<CR><SID>WE
 map <silent> <Leader>tab  <SID>WS:'a,.s/^\(\t*\)\(.*\)/\=submatch(1).escape(substitute(submatch(2),'\t','@','g'),'\')/<CR>:AlignCtrl mI=l @<CR>:'a,.Align<CR>:'y+1,'z-1s/@/ /g<CR><SID>WE
 map <silent> <Leader>tml  <SID>WS:AlignCtrl mWp1P0=l \\\@<!\\\s*$<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>tsp  <SID>WS:'a,.s/^\(\s*\)\(.*\)/\=submatch(1).escape(substitute(submatch(2),'\s\+','@','g'),'\')/<CR>:AlignCtrl mI=lp0P0 @<CR>:'a,.Align<CR>:'y+1,'z-1s/@/ /g<CR><SID>WE
-map <silent> <Leader>tsq  <SID>WS:'a,.ReplaceQuotedSpaces<CR>:'a,.s/^\(\s*\)\(.*\)/\=submatch(1).substitute(submatch(2),'\s\+','@','g')/<CR>:AlignCtrl mIp0P0=l @<CR>:'a,.Align<CR>:'y+1,'z-1s/[%@]/ /g<CR><SID>WE
+map <silent> <Leader>tsq  <SID>WS:'a,.AlignReplaceQuotedSpaces<CR>:'a,.s/^\(\s*\)\(.*\)/\=submatch(1).substitute(submatch(2),'\s\+','@','g')/<CR>:AlignCtrl mIp0P0=l @<CR>:'a,.Align<CR>:'y+1,'z-1s/[%@]/ /g<CR><SID>WE
 map <silent> <Leader>tt   <SID>WS:AlignCtrl mIp1P1=l \\\@<!& \\\\<CR>:'a,.Align<CR><SID>WE
 
 " ---------------------------------------------------------------------
@@ -404,7 +405,9 @@ fun! s:FixMultiDec()
   let xkeep   = @x
   let curline = getline(".")
 "  call Decho("curline<".curline.">")
-  let @x=substitute(curline,'^\(\s*[a-zA-Z_ \t]\+\)\s\+[(*]*\h.*$','\1','')
+
+  " Get the type.  I'm assuming one type per line (ie.  int x; double y;   on one line will not be handled properly)
+  let @x=substitute(curline,'^\(\s*[a-zA-Z_ \t][a-zA-Z0-9_ \t]*\)\s\+[(*]*\h.*$','\1','')
 "  call Decho("@x<".@x.">")
 
   " transform line
