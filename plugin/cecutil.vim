@@ -2,7 +2,7 @@
 "               save/restore mark position
 "               save/restore selected user maps
 "  Author:	Charles E. Campbell, Jr.
-"  Version:	15e	ASTRO-ONLY
+"  Version:	15
 "  Date:	Apr 10, 2006
 "
 "  Saving Restoring Destroying Marks: {{{1
@@ -28,7 +28,7 @@
 if &cp || exists("g:loaded_cecutil")
  finish
 endif
-let g:loaded_cecutil = "v15e"
+let g:loaded_cecutil = "v15"
 let s:keepcpo        = &cpo
 set cpo&vim
 "DechoVarOn
@@ -447,7 +447,7 @@ fun! RestoreUserMaps(suffix)
    let s:restoremap_{a:suffix}= substitute(s:restoremap_{a:suffix},'|\s*$','','e')
    if s:restoremap_{a:suffix} != ""
 "   	call Decho("exe ".s:restoremap_{a:suffix})
-    exe "silent! s:restoremap_{a:suffix}"
+    exe "silent! ".s:restoremap_{a:suffix}
    endif
    unlet s:restoremap_{a:suffix}
   endif

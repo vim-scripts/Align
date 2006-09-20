@@ -1,4 +1,4 @@
-*align.txt*	The Alignment Tool			Mar 20, 2006
+*align.txt*	The Alignment Tool			Sep 01, 2006
 
 Author:  Charles E. Campbell, Jr.  <NdrOchip@ScampbellPfamily.AbizM>
 	  (remove NOSPAM from Campbell's email first)
@@ -1118,9 +1118,9 @@ ALIGNMENT MAPS				*alignmaps* *align-maps*
 	  <TR><TD> ...field three... </TD><TD> ...field four... </TD></TR>
 <
 ==============================================================================
-4. Alignment Tool History				*align-history*
+4. Alignment Tool History				*align-history* {{{1
 
-ALIGN HISTORY
+ALIGN HISTORY						{{{2
 	29 : Jan 18, 2006 * cecutil updated to use keepjumps
 	     Feb 23, 2006 * Align now converted to vim 7.0 style using
 	                    auto-loading functions.
@@ -1173,7 +1173,12 @@ ALIGN HISTORY
 	                    ignorecase option handled
 	 9 : Jun 25, 2002 : implemented cyclic padding
 
-ALIGNMENT MAP HISTORY					*alignmap-history*
+ALIGNMENT MAP HISTORY					*alignmap-history* {{{2
+	35  : Sep 01, 2006 : * \t= and cousins used "`"s.  They now use \xff
+			       characters.
+			     * \acom can now work with doxygen style /// comments
+			     * <char-0xff> used in \t= \T= \w= and \m= instead
+			       of backquotes.
 	34  : Feb 23, 2006 : * AlignMaps now converted to vim 7.0 style using
 	                       auto-loading functions.
 	33  : Oct 12, 2005 : * \ts, now uses P1 in its AlignCtrl call
@@ -1227,4 +1232,5 @@ ALIGNMENT MAP HISTORY					*alignmap-history*
 	                   :   various bugfixes to \afnc, \T=, etc
 
 ==============================================================================
+Modelines: {{{1
 vim:tw=78:ts=8:ft=help:fdm=marker:
