@@ -1,7 +1,7 @@
 " AlignMaps:   Alignment maps based upon <Align.vim>
 " Maintainer:  Dr. Charles E. Campbell, Jr. <Charles.Campbell@gsfc.nasa.gov>
-" Date:        Sep 08, 2006
-" Version:     35
+" Date:        May 24, 2007
+" Version:     36
 "
 " NOTE: the code herein needs vim 6.0 or later
 "                       needs <Align.vim> v6 or later
@@ -38,7 +38,7 @@
 if exists("g:loaded_alignmaps") || &cp
  finish
 endif
-let g:loaded_alignmaps = "v35"
+let g:loaded_alignmaps = "v36"
 let s:keepcpo          = &cpo
 set cpo&vim
 
@@ -55,7 +55,7 @@ nmap <silent> <script> <Plug>AlignMapsWrapperStart	:set lz<CR>:call AlignWrapper
 fun! AlignWrapperStart()
 "  call Dfunc("AlignWrapperStart()")
 
-  if !exists("s:alignmaps_wrapcnt") || s:alignmaps_wrapcnt <= 0
+  if line("'y") == 0 || line("'z") == 0 || !exists("s:alignmaps_wrapcnt") || s:alignmaps_wrapcnt <= 0
 "   call Decho("wrapper initialization")
    let s:alignmaps_wrapcnt    = 1
    let s:alignmaps_keepgd     = &gdefault
@@ -68,7 +68,7 @@ fun! AlignWrapperStart()
    put =''
    norm! mz'a
    put! =''
-   norm! my
+   ky
    let s:alignmaps_zline      = line("'z")
    exe "'y,'zs/@/\177/ge"
   else
@@ -148,7 +148,7 @@ map <silent> <Leader>a,    <SID>WS:'y,'zs/\(\S\)\s\+/\1 /ge<CR>'yjma'zk<Leader>j
 map <silent> <Leader>a<    <SID>WS:AlignCtrl mIp1P1=l << >><CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>a=    <SID>WS:AlignCtrl mIp1P1=l<CR>:AlignCtrl g :=<CR>:'a,'zAlign :\==<CR><SID>WE
 map <silent> <Leader>abox  <SID>WS:let g:alignmaps_iws=substitute(getline("'a"),'^\(\s*\).*$','\1','e')<CR>:'a,'z-1s/^\s\+//e<CR>:'a,'z-1s/^.*$/@&@/<CR>:AlignCtrl m=p01P0w @<CR>:'a,.Align<CR>:'a,'z-1s/@/ * /<CR>:'a,'z-1s/@$/*/<CR>'aYP:s/./*/g<CR>0r/'zkYp:s/./*/g<CR>0r A/<Esc>:exe "'a-1,'z-1s/^/".g:alignmaps_iws."/e"<CR><SID>WE
-map <silent> <Leader>acom  <SID>WS:'a,.s/\/[*/]\/\=/@&@/e<CR>:'a,.s/\*\//@&/e<CR>:'y,'zs/^\( *\) @/\1@/e<CR>'zk<Leader>tW@:'y,'zs/^\(\s*\) @/\1/e<CR>:'y,'zs/ @//eg<CR><SID>WE
+map <silent> <Leader>acom  <SID>WS:'a,.s/\/[*/]\/\=/@&@/e<CR>:'a,.s/\*\//@&/e<CR>:'y,'zs/^\( *\) @/\1@/e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'y,'zs/ @//eg<CR><SID>WE
 map <silent> <Leader>adcom <SID>WS:'a,.v/^\s*\/[/*]/s/\/[*/]\*\=/@&@/e<CR>:'a,.v/^\s*\/[/*]/s/\*\//@&/e<CR>:'y,'zv/^\s*\/[/*]/s/^\( *\) @/\1@/e<CR>'zk<Leader>tdW@:'y,'zv/^\s*\/[/*]/s/^\(\s*\) @/\1/e<CR>:'y,'zs/ @//eg<CR><SID>WE
 map <silent> <Leader>aocom :AlignPush<CR>:AlignCtrl g /[*/]<CR><Leader>acom:AlignPop<CR>
 map <silent> <Leader>ascom <SID>WS:'a,.s/\/[*/]/@&@/e<CR>:'a,.s/\*\//@&/e<CR>:silent! 'a,.g/^\s*@\/[*/]/s/@//ge<CR>:AlignCtrl v ^\s*\/[*/]<CR>:AlignCtrl g \/[*/]<CR>'zk<Leader>tW@:'y,'zs/^\(\s*\) @/\1/e<CR>:'y,'zs/ @//eg<CR><SID>WE
@@ -156,14 +156,14 @@ map <silent> <Leader>adec  <SID>WS:'a,'zs/\([^ \t/(]\)\([*&]\)/\1 \2/e<CR>:'y,'z
 map <silent> <Leader>adef  <SID>WS:AlignPush<CR>:AlignCtrl v ^\s*\(\/\*\<bar>\/\/\)<CR>:'a,.v/^\s*\(\/\*\<bar>\/\/\)/s/^\(\s*\)#\(\s\)*define\s*\(\I[a-zA-Z_0-9(),]*\)\s*\(.\{-}\)\($\<Bar>\/\*\)/#\1\2define @\3@\4@\5/e<CR>:'a,.v/^\s*\(\/\*\<bar>\/\/\)/s/\($\<Bar>\*\/\)/@&/e<CR>'zk<Leader>t@'yjma'zk:'a,.v/^\s*\(\/\*\<bar>\/\/\)/s/ @//g<CR><SID>WE
 map <silent> <Leader>afnc  :set lz<CR>:silent call <SID>Afnc()<CR>:set nolz<CR>
 if exists("g:alignmaps_usanumber")
- map <silent> <Leader>anum  <SID>WS:'a,'zs/\(\d\)\s\+\(-\=\d\)/\1@\2/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [.@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(\.\)\(\s\+\)\([-0-9.,e]\+\)/\1\3\2/ge<CR><SID>WE
+ map <silent> <Leader>anum  <SID>WS:'a,'zs/\([0-9.]\)\s\+\([-+]\=\d\)/\1@\2/ge<CR>:'a,'zs/\.@/\.0@/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [.@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(\.\)\(\s\+\)\([0-9.,eE+]\+\)/\1\3\2/ge<CR>:'a,'zs/\([eE]\)\(\s\+\)\([0-9+\-+]\+\)/\1\3\2/ge<CR><SID>WE
 elseif exists("g:alignmaps_euronumber")
- map <silent> <Leader>anum  <SID>WS:'a,'zs/\(\d\)\s\+\(-\=\d\)/\1@\2/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [,@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(,\)\(\s\+\)\([-0-9.,e]\+\)/\1\3\2/ge<CR><SID>WE
+ map <silent> <Leader>anum  <SID>WS:'a,'zs/\([0-9.]\)\s\+\([-+]\=\d\)/\1@\2/ge<CR>:'a,'zs/\.@/\.0@/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [,@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(,\)\(\s\+\)\([-0-9.,eE+]\+\)/\1\3\2/ge<CR>:'a,'zs/\([eE]\)\(\s\+\)\([0-9+\-+]\+\)/\1\3\2/ge<CR><SID>WE
 else
- map <silent> <Leader>anum  <SID>WS:'a,'zs/\(\d\)\s\+\(-\=[.,]\=\d\)/\1@\2/ge<CR>:AlignCtrl mp0P0<CR>:'a,'zAlign [.,@]<CR>:'a,'zs/\([-0-9.,]*\)\(\s*\)\([.,]\)/\2\1\3/g<CR>:'a,'zs/@/ /ge<CR><SID>WE
+ map <silent> <Leader>anum  <SID>WS:'a,'zs/\([0-9.]\)\s\+\([-+]\=[.,]\=\d\)/\1@\2/ge<CR>:'a,'zs/\.@/\.0@/ge<CR>:AlignCtrl mp0P0<CR>:'a,'zAlign [.,@]<CR>:'a,'zs/\([-0-9.,]*\)\(\s*\)\([.,]\)/\2\1\3/g<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\([eE]\)\(\s\+\)\([0-9+\-+]\+\)/\1\3\2/ge<CR><SID>WE
 endif
-map <silent> <Leader>aunum  <SID>WS:'a,'zs/\(\d\)\s\+\(-\=\d\)/\1@\2/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [.@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(\.\)\(\s\+\)\([-0-9.,e]\+\)/\1\3\2/ge<CR><SID>WE
-map <silent> <Leader>aenum  <SID>WS:'a,'zs/\(\d\)\s\+\(-\=\d\)/\1@\2/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [,@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(,\)\(\s\+\)\([-0-9.,e]\+\)/\1\3\2/ge<CR><SID>WE
+map <silent> <Leader>aunum  <SID>WS:'a,'zs/\([0-9.]\)\s\+\([-+]\=\d\)/\1@\2/ge<CR>:'a,'zs/\.@/\.0@/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [.@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(\.\)\(\s\+\)\([-0-9.,eE+]\+\)/\1\3\2/ge<CR>:'a,'zs/\([eE]\)\(\s\+\)\([0-9+\-+]\+\)/\1\3\2/ge<CR><SID>WE
+map <silent> <Leader>aenum  <SID>WS:'a,'zs/\([0-9.]\)\s\+\([-+]\=\d\)/\1@\2/ge<CR>:'a,'zs/\.@/\.0@/ge<CR>:AlignCtrl mp0P0r<CR>:'a,'zAlign [,@]<CR>:'a,'zs/@/ /ge<CR>:'a,'zs/\(,\)\(\s\+\)\([-0-9.,eE+]\+\)/\1\3\2/ge<CR>:'a,'zs/\([eE]\)\(\s\+\)\([0-9+\-+]\+\)/\1\3\2/ge<CR><SID>WE
 
 " ---------------------------------------------------------------------
 " html table alignment	{{{1
@@ -194,7 +194,7 @@ map <silent> <Leader>ts,  <SID>WS:AlignCtrl mIp0P1=l ,<CR>:'a,.Align<CR>:'a,.s/\
 map <silent> <Leader>t:   <SID>WS:AlignCtrl mIp1P1=l :<CR>:'a,.Align<CR><SID>WE
 map <silent> <Leader>t;   <SID>WS:AlignCtrl mIp0P0=l ;<CR>:'a,.Align<CR>:.,'zs/ \( *\);/;\1/ge<CR><SID>WE
 map <silent> <Leader>t<   <SID>WS:AlignCtrl mIp0P0=l <<CR>:'a,.Align<CR><SID>WE
-map <silent> <Leader>t=   <SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zs@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zs/==/\="\<Char-0xff>\<Char-0xff>"/ge<CR>:'a,'zs/!=/\="!\<Char-0xff>"/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1s/\( \+\);/;\1/ge<CR>:'a,'z-1v/^\s*\/[*/]/s/\/[*/]/@&@/e<CR>:'a,'z-1v/^\s*\/[*/]/s/\*\//@&/e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1s/\xff/=/ge<CR>:'y,'zs/ @//eg<CR><SID>WE
+map <silent> <Leader>t=   <SID>WS:'a,'zs/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zs@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zs/==/\="\<Char-0xff>\<Char-0xff>"/ge<CR>:'a,'zs/!=/\="!\<Char-0xff>"/ge<CR>'zk:AlignCtrl mIp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1Align<CR>:'a,'z-1s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1s/\( \+\);/;\1/ge<CR>:'a,'z-1v/^\s*\/[*/]/s/\/[*/]/@&@/e<CR>:'a,'z-1v/^\s*\/[*/]/s/\*\//@&/e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1s/<Char-0xff>/=/ge<CR>:'y,'zs/ @//eg<CR><SID>WE
 map <silent> <Leader>w=   <SID>WS:'a,'zg/=/s/\s\+\([*/+\-%<Bar>&\~^]\==\)/ \1/e<CR>:'a,'zg/=/s@ \+\([*/+\-%<Bar>&\~^]\)=@\1=@ge<CR>:'a,'zg/=/s/==/\="\<Char-0xff>\<Char-0xff>"/ge<CR>:'a,'zg/=/s/!=/\="!\<Char-0xff>"/ge<CR>'zk:AlignCtrl mWp1P1=l =<CR>:AlignCtrl g =<CR>:'a,'z-1g/=/Align<CR>:'a,'z-1g/=/s@\([*/+\-%<Bar>&\~^!=]\)\( \+\)=@\2\1=@ge<CR>:'a,'z-1g/=/s/\( \+\);/;\1/ge<CR>:'a,'z-1v/^\s*\/[*/]/s/\/[*/]/@&@/e<CR>:'a,'z-1v/^\s*\/[*/]/s/\*\//@&/e<CR>'zk<Leader>t@:'y,'zs/^\(\s*\) @/\1/e<CR>:'a,'z-1g/=/s/\xff/=/ge<CR>:'y,'zg/=/s/ @//eg<CR><SID>WE
 map <silent> <Leader>t?   <SID>WS:AlignCtrl mIp0P0=l ?<CR>:'a,.Align<CR>:.,'zs/ \( *\);/;\1/ge<CR><SID>WE
 map <silent> <Leader>t~   <SID>WS:AlignCtrl mIp0P0=l ~<CR>:'a,.Align<CR>:'y,'zs/ \( *\);/;\1/ge<CR><SID>WE
@@ -255,6 +255,47 @@ vmap <silent> <Leader>tp@	:<BS><BS><BS><CR>ma'><Leader>tp@
 vmap <silent> <Leader>tt	:<BS><BS><BS><CR>ma'><Leader>tt
 vmap <silent> <Leader>Htd	:<BS><BS><BS><CR>ma'><Leader>Htd
 vmap <silent> <Leader>anum  :B s/\(\d\)\s\+\(-\=[.,]\=\d\)/\1@\2/ge<CR>:AlignCtrl mp0P0<CR>gv:Align [.,@]<CR>:'<,'>s/\([-0-9.,]*\)\(\s\+\)\([.,]\)/\2\1\3/ge<CR>:'<,'>s/@/ /ge<CR>
+
+" ---------------------------------------------------------------------
+" Menu Support: {{{1
+"   ma ..move.. use menu
+"   v V or ctrl-v ..move.. use menu
+if has("menu") && has("gui_running") && &go =~ 'm' && !exists("s:firstmenu")
+ let s:firstmenu= 1
+ if !exists("g:DrChipTopLvlMenu")
+  let g:DrChipTopLvlMenu= "DrChip."
+ endif
+ if g:DrChipTopLvlMenu != ""
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.<<\ and\ >>	<Leader>a<'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Assignment\ =	<Leader>t='
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Assignment\ :=	<Leader>a='
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Backslashes	<Leader>tml'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Breakup\ Comma\ Declarations	<Leader>a,'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.C\ Comment\ Box	<Leader>abox'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Commas	<Leader>t,'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Commas	<Leader>ts,'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Commas\ With\ Strings	<Leader>tsq'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Comments	<Leader>acom'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Comments\ Only	<Leader>aocom'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Declaration\ Comments	<Leader>adcom'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Declarations	<Leader>adec'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Definitions	<Leader>adef'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Function\ Header	<Leader>afnc'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Html\ Tables	<Leader>Htd'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.(\.\.\.)?\.\.\.\ :\ \.\.\.	<Leader>a?'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Numbers	<Leader>anum'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Numbers\ (American-Style)	<Leader>aunum	<Leader>aunum'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Numbers\ (Euro-Style)	<Leader>aenum'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Spaces\ (Left\ Justified)	<Leader>tsp'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Spaces\ (Right\ Justified)	<Leader>Tsp'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Statements\ With\ Percent\ Style\ Comments	<Leader>m='
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Symbol\ <	<Leader>t<'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Symbol\ \|	<Leader>t|'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Symbol\ @	<Leader>t@'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Symbol\ #	<Leader>t#'
+  exe 'menu '.g:DrChipTopLvlMenu.'AlignMaps.Tabs	<Leader>tab'
+ endif
+endif
 
 " ---------------------------------------------------------------------
 " CharJoiner: joins lines which end in the given character (spaces {{{1

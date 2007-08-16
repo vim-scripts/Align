@@ -1,7 +1,7 @@
 " Align: tool to align multiple fields based on one or more separators
 "   Author:		Charles E. Campbell, Jr.
-"   Date:		Jul 19, 2006
-"   Version:	30
+"   Date:		Aug 16, 2007
+"   Version:	31
 " GetLatestVimScripts: 294 1 :AutoInstall: Align.vim
 " GetLatestVimScripts: 1066 1 cecutil.vim
 " Copyright:    Copyright (C) 1999-2005 Charles E. Campbell, Jr. {{{1
@@ -97,7 +97,7 @@
 if exists("g:loaded_align") || &cp
  finish
 endif
-let g:loaded_align = "v30"
+let g:loaded_align = "v31"
 let s:keepcpo      = &cpo
 set cpo&vim
 
@@ -142,7 +142,7 @@ set cpo&vim
 "            |  s:AlignSep
 fun! Align#AlignCtrl(...)
 
-"  call Dfunc("AlignCtrl()")
+"  call Dfunc("AlignCtrl(...) a:0=".a:0)
 
   " save options that will be changed
   let keep_search = @/
@@ -219,6 +219,7 @@ fun! Align#AlignCtrl(...)
    " ----------------------------------
    " Process alignment control settings
    " ----------------------------------
+"   call Decho("process the alignctrl settings")
 "   call Decho("style<".style.">")
 
    if style ==? "default"
@@ -227,7 +228,7 @@ fun! Align#AlignCtrl(...)
 	 if exists("s:AlignCtrlStackQty")
 	  " clear AlignCtrl stack
       while s:AlignCtrlStackQty > 0
-	   call AlignPop()
+	   call Align#AlignPop()
 	  endwhile
 	  unlet s:AlignCtrlStackQty
 	 endif
@@ -244,13 +245,14 @@ fun! Align#AlignCtrl(...)
    if style =~# 'm'
 	" map support: Do an AlignPush now and the next call to Align()
 	"              will do an AlignPop at exit
+"	call Decho("style case m: do AlignPush")
 	call Align#AlignPush()
 	let s:DoAlignPop= 1
    endif
 
    " = : record a list of alignment patterns that are equivalent
    if style =~# "="
-"    call Decho("AlignCtrl: record list of alignment patterns")
+"	call Decho("style case =: record list of equiv alignment patterns")
     let s:AlignCtrl  = '='
 	if a:0 >= 2
      let s:AlignPatQty= 1
@@ -266,7 +268,7 @@ fun! Align#AlignCtrl(...)
 
     "c : cycle through alignment pattern(s)
    elseif style =~# 'C'
-"    call Decho("AlignCtrl: cycle through alignment pattern(s)")
+"	call Decho("style case C: cycle through alignment pattern(s)")
     let s:AlignCtrl  = 'C'
 	if a:0 >= 2
      let s:AlignPatQty= a:0 - 1
@@ -281,6 +283,7 @@ fun! Align#AlignCtrl(...)
 
    if style =~# 'p'
     let s:AlignPrePad= substitute(style,'^.*p\(\d\+\).*$','\1','')
+"	call Decho("style case p".s:AlignPrePad.": pre-separator padding")
     if s:AlignPrePad == ""
      echoerr "AlignCtrl: 'p' needs to be followed by a numeric argument'
      let @/ = keep_search
@@ -292,6 +295,7 @@ fun! Align#AlignCtrl(...)
 
    if style =~# 'P'
     let s:AlignPostPad= substitute(style,'^.*P\(\d\+\).*$','\1','')
+"	call Decho("style case P".s:AlignPostPad.": post-separator padding")
     if s:AlignPostPad == ""
      echoerr "AlignCtrl: 'P' needs to be followed by a numeric argument'
      let @/ = keep_search
@@ -302,15 +306,19 @@ fun! Align#AlignCtrl(...)
    endif
 
    if     style =~# 'w'
+"	call Decho("style case w: ignore leading whitespace")
 	let s:AlignLeadKeep= 'w'
    elseif style =~# 'W'
+"	call Decho("style case w: keep leading whitespace")
 	let s:AlignLeadKeep= 'W'
    elseif style =~# 'I'
+"	call Decho("style case w: retain initial leading whitespace")
 	let s:AlignLeadKeep= 'I'
    endif
 
    if style =~# 'g'
 	" first list item is a "g" selector pattern
+"	call Decho("style case g: global selector pattern")
 	if a:0 < 2
 	 if exists("s:AlignGPat")
 	  unlet s:AlignGPat
@@ -322,6 +330,7 @@ fun! Align#AlignCtrl(...)
 	endif
    elseif style =~# 'v'
 	" first list item is a "v" selector pattern
+"	call Decho("style case v: global selector anti-pattern")
 	if a:0 < 2
 	 if exists("s:AlignVPat")
 	  unlet s:AlignVPat
@@ -335,12 +344,14 @@ fun! Align#AlignCtrl(...)
 
     "[-lrc+:] : set up s:AlignStyle
    if style =~# '[-lrc+:]'
+"	call Decho("style case [-lrc+:]: field justification")
     let s:AlignStyle= substitute(style,'[^-lrc:+]','','g')
-"   call Decho("AlignStyle<".s:AlignStyle.">")
+"    call Decho("AlignStyle<".s:AlignStyle.">")
    endif
 
    "[<>|] : set up s:AlignSep
    if style =~# '[<>|]'
+"	call Decho("style case [-lrc+:]: separator justification")
 	let s:AlignSep= substitute(style,'[^<>|]','','g')
 "	call Decho("AlignSep ".s:AlignSep)
    endif
@@ -355,7 +366,7 @@ fun! Align#AlignCtrl(...)
   let @/ = keep_search
   let &ic= keep_ic
 
-"  call Dret("AlignCtrl")
+"  call Dret("AlignCtrl ".s:AlignCtrl.'p'.s:AlignPrePad.'P'.s:AlignPostPad.s:AlignLeadKeep.s:AlignStyle)
   return s:AlignCtrl.'p'.s:AlignPrePad.'P'.s:AlignPostPad.s:AlignLeadKeep.s:AlignStyle
 endfun
 
@@ -375,11 +386,28 @@ endfun
 
 " ---------------------------------------------------------------------
 " Align: align selected text based on alignment pattern(s) {{{1
-fun! Align#Align(...) range
-"  call Dfunc("Align()")
+fun! Align#Align(hasctrl,...) range
+"  call Dfunc("Align(hasctrl=".a:hasctrl.",...) a:0=".a:0)
+
+  " if :Align! was used, then the first argument is (should be!) an AlignCtrl string
+  " Note that any alignment control set this way will be temporary.
+  let hasctrl= a:hasctrl
+  if a:hasctrl && a:0 >= 1
+"   call Decho("Align! : using a:1<".a:1."> for AlignCtrl")
+   if a:1 =~ '[gv]'
+   	let hasctrl= hasctrl + 1
+	call Align#AlignCtrl('m')
+    call Align#AlignCtrl(a:1,a:2)
+"    call Decho("Align! : also using a:2<".a:2."> for AlignCtrl")
+   elseif a:1 !~ 'm'
+    call Align#AlignCtrl(a:1."m")
+   else
+    call Align#AlignCtrl(a:1)
+   endif
+  endif
 
   " Check for bad separator patterns (zero-length matches)
-  let ipat= 1
+  let ipat= 1 + hasctrl
   while ipat <= a:0
    if "" =~ a:{ipat}
 	echoerr "Align: separator<".a:{ipat}."> matches zero-length string"
@@ -395,16 +423,17 @@ fun! Align#Align(...) range
   let keep_report= &report
   set noic report=10000
 
+  if a:0 > hasctrl
   " Align will accept a list of separator regexps
-  if a:0 > 0
 "   call Decho("a:0=".a:0.": accepting list of separator regexp")
 
    if s:AlignCtrl =~# "="
-"    call Decho("AlignCtrl: record list of alignment patterns")
+   	"= : consider all separators to be equivalent
+"    call Decho("AlignCtrl: record list of equivalent alignment patterns")
     let s:AlignCtrl  = '='
-    let s:AlignPat_1 = a:1
+    let s:AlignPat_1 = a:{1 + hasctrl}
     let s:AlignPatQty= 1
-    let ipat         = 2
+    let ipat         = 2 + hasctrl
     while ipat <= a:0
      let s:AlignPat_1 = s:AlignPat_1.'\|'.a:{ipat}
      let ipat         = ipat + 1
@@ -412,14 +441,14 @@ fun! Align#Align(...) range
     let s:AlignPat_1= '\('.s:AlignPat_1.'\)'
 "    call Decho("AlignCtrl<".s:AlignCtrl."> AlignPat<".s:AlignPat_1.">")
 
-    "c : cycle through alignment pattern(s)
    elseif s:AlignCtrl =~# 'C'
+    "c : cycle through alignment pattern(s)
 "    call Decho("AlignCtrl: cycle through alignment pattern(s)")
     let s:AlignCtrl  = 'C'
-    let s:AlignPatQty= a:0
+    let s:AlignPatQty= a:0 - hasctrl
     let ipat         = 1
-    while ipat <= a:0
-     let s:AlignPat_{ipat}= a:{ipat}
+    while ipat <= s:AlignPatQty
+     let s:AlignPat_{ipat}= a:{(ipat + hasctrl)}
 "     call Decho("AlignCtrl<".s:AlignCtrl."> AlignQty=".s:AlignPatQty." AlignPat_".ipat."<".s:AlignPat_{ipat}.">")
      let ipat= ipat + 1
     endwhile
@@ -488,13 +517,13 @@ fun! Align#Align(...) range
     " Process each line
     let txt = getline(line)
 "    call Decho(" ")
-"    call Decho("Line ".line." <".txt.">")
+"    call Decho("Pass".pass.": Line ".line." <".txt.">")
 
     " AlignGPat support: allows a selector pattern (akin to g/selector/cmd )
     if exists("s:AlignGPat")
-"	 call Decho("AlignGPat<".s:AlignGPat.">")
+"	 call Decho("Pass".pass.": AlignGPat<".s:AlignGPat.">")
 	 if match(txt,s:AlignGPat) == -1
-"	  call Decho("skipping")
+"	  call Decho("Pass".pass.": skipping")
 	  let line= line + 1
 	  continue
 	 endif
@@ -502,9 +531,9 @@ fun! Align#Align(...) range
 
     " AlignVPat support: allows a selector pattern (akin to v/selector/cmd )
     if exists("s:AlignVPat")
-"	 call Decho("AlignGPat<".s:AlignGPat.">")
+"	 call Decho("Pass".pass.": AlignVPat<".s:AlignVPat.">")
 	 if match(txt,s:AlignVPat) != -1
-"	  call Decho("skipping")
+"	  call Decho("Pass".pass.": skipping")
 	  let line= line + 1
 	  continue
 	 endif
@@ -512,7 +541,7 @@ fun! Align#Align(...) range
 
 	" Always skip blank lines
 	if match(txt,'^\s*$') != -1
-"	  call Decho("skipping")
+"	  call Decho("Pass".pass.": skipping")
 	 let line= line + 1
 	 continue
 	endif
@@ -522,14 +551,14 @@ fun! Align#Align(...) range
     if begcol > 0
 	 " Record text to left of selected area
      let bgntxt= strpart(txt,0,begcol)
-"	  call Decho("record text to left: bgntxt<".bgntxt.">")
+"	  call Decho("Pass".pass.": record text to left: bgntxt<".bgntxt.">")
     elseif s:AlignLeadKeep == 'W'
 	 let bgntxt= substitute(txt,'^\(\s*\).\{-}$','\1','')
-"	  call Decho("retaining all leading ws: bgntxt<".bgntxt.">")
+"	  call Decho("Pass".pass.": retaining all leading ws: bgntxt<".bgntxt.">")
     elseif s:AlignLeadKeep == 'w' || !exists("bgntxt")
 	 " No beginning text
 	 let bgntxt= ""
-"	  call Decho("no beginning text")
+"	  call Decho("Pass".pass.": no beginning text")
     endif
     if ragged
 	 let endtxt= ""
@@ -539,9 +568,9 @@ fun! Align#Align(...) range
      let txt   = strpart(txt,begcol,endcol-begcol+1)
     endif
 "    call Decho(" ")
-"    call Decho("bgntxt<".bgntxt.">")
-"    call Decho("   txt<". txt  .">")
-"    call Decho("endtxt<".endtxt.">")
+"    call Decho("Pass".pass.": bgntxt<".bgntxt.">")
+"    call Decho("Pass".pass.":    txt<". txt  .">")
+"    call Decho("Pass".pass.": endtxt<".endtxt.">")
 
     " Initialize for both passes
     let seppat      = s:AlignPat_{1}
@@ -557,7 +586,7 @@ fun! Align#Align(...) range
 	let alignsep    = s:AlignSep
 	let alignophold = " "
 	let alignop     = "l"
-"	call Decho("initial alignstyle<".alignstyle."> seppat<".seppat.">")
+"	call Decho("Pass".pass.": initial alignstyle<".alignstyle."> seppat<".seppat.">")
 
     " Process each field on the line
     while doend > 0
@@ -565,7 +594,7 @@ fun! Align#Align(...) range
 	  " C-style: cycle through pattern(s)
      if s:AlignCtrl == 'C' && doend == 1
 	  let seppat   = s:AlignPat_{ipat}
-"	  call Decho("processing field: AlignCtrl=".s:AlignCtrl." ipat=".ipat." seppat<".seppat.">")
+"	  call Decho("Pass".pass.": processing field: AlignCtrl=".s:AlignCtrl." ipat=".ipat." seppat<".seppat.">")
 	  let ipat     = ipat + 1
 	  if ipat > s:AlignPatQty
 	   let ipat = 1
@@ -583,7 +612,7 @@ fun! Align#Align(...) range
 	  if alignop == ':'
 	   let seppat  = '$'
 	   let doend   = 2
-"	   call Decho("alignop<:> case: setting seppat<$> doend==2")
+"	   call Decho("Pass".pass.": alignop<:> case: setting seppat<$> doend==2")
 	  endif
 	 endif
 
@@ -596,23 +625,23 @@ fun! Align#Align(...) range
      let endfield = match(txt,seppat,bgnfield)
 	 let sepfield = matchend(txt,seppat,bgnfield)
      let skipfield= sepfield
-"	 call Decho("endfield=match(txt<".txt.">,seppat<".seppat.">,bgnfield=".bgnfield.")=".endfield)
+"	 call Decho("Pass".pass.": endfield=match(txt<".txt.">,seppat<".seppat.">,bgnfield=".bgnfield.")=".endfield)
 	 while alignop == '-' && endfield != -1
 	  let endfield  = match(txt,seppat,skipfield)
 	  let sepfield  = matchend(txt,seppat,skipfield)
 	  let skipfield = sepfield
 	  let alignop   = strpart(alignstyle,0,1)
 	  let alignstyle= strpart(alignstyle,1).strpart(alignstyle,0,1)
-"	  call Decho("extend field: endfield<".strpart(txt,bgnfield,endfield-bgnfield)."> alignop<".alignop."> alignstyle<".alignstyle.">")
+"	  call Decho("Pass".pass.": extend field: endfield<".strpart(txt,bgnfield,endfield-bgnfield)."> alignop<".alignop."> alignstyle<".alignstyle.">")
 	 endwhile
 	 let seplen= sepfield - endfield
-"	 call Decho("seplen=[sepfield=".sepfield."] - [endfield=".endfield."]=".seplen)
+"	 call Decho("Pass".pass.": seplen=[sepfield=".sepfield."] - [endfield=".endfield."]=".seplen)
 
 	 if endfield != -1
 	  if pass == 1
 	   " ---------------------------------------------------------------------
 	   " Pass 1: Update FieldSize to max
-"	   call Decho("before lead/trail remove: field<".strpart(txt,bgnfield,endfield-bgnfield).">")
+"	   call Decho("Pass".pass.": before lead/trail remove: field<".strpart(txt,bgnfield,endfield-bgnfield).">")
 	   let field      = substitute(strpart(txt,bgnfield,endfield-bgnfield),'^\s*\(.\{-}\)\s*$','\1','')
        if s:AlignLeadKeep == 'W'
 	    let field = bgntxt.field
@@ -622,10 +651,10 @@ fun! Align#Align(...) range
 	   let sFieldSize = "FieldSize_".ifield
 	   if !exists(sFieldSize)
 	    let FieldSize_{ifield}= fieldlen
-"	    call Decho(" set FieldSize_{".ifield."}=".FieldSize_{ifield}." <".field.">")
+"	    call Decho("Pass".pass.":  set FieldSize_{".ifield."}=".FieldSize_{ifield}." <".field.">")
 	   elseif fieldlen > FieldSize_{ifield}
 	    let FieldSize_{ifield}= fieldlen
-"	    call Decho("oset FieldSize_{".ifield."}=".FieldSize_{ifield}." <".field.">")
+"	    call Decho("Pass".pass.": oset FieldSize_{".ifield."}=".FieldSize_{ifield}." <".field.">")
 	   endif
 	   let sSepSize= "SepSize_".ifield
 	   if !exists(sSepSize)
@@ -633,7 +662,7 @@ fun! Align#Align(...) range
 "	    call Decho(" set SepSize_{".ifield."}=".SepSize_{ifield}." <".field.">")
 	   elseif seplen > SepSize_{ifield}
 		let SepSize_{ifield}= seplen
-"	    call Decho("oset SepSize_{".ifield."}=".SepSize_{ifield}." <".field.">")
+"	    call Decho("Pass".pass.": oset SepSize_{".ifield."}=".SepSize_{ifield}." <".field.">")
 	   endif
 
 	  else
@@ -669,7 +698,7 @@ fun! Align#Align(...) range
 		endif
 	   endif
 	   let spaces     = FieldSize_{ifield} - fieldlen
-"	   call Decho("Field #".ifield."<".field."> spaces=".spaces." be[".bgnfield.",".endfield."] pad=".prepad.','.postpad." FS_".ifield."<".FieldSize_{ifield}."> sep<".sep."> ragged=".ragged." doend=".doend." alignop<".alignop.">")
+"	   call Decho("Pass".pass.": Field #".ifield."<".field."> spaces=".spaces." be[".bgnfield.",".endfield."] pad=".prepad.','.postpad." FS_".ifield."<".FieldSize_{ifield}."> sep<".sep."> ragged=".ragged." doend=".doend." alignop<".alignop.">")
 
 	    " Perform alignment according to alignment style justification
 	   if spaces > 0
@@ -695,7 +724,7 @@ fun! Align#Align(...) range
 		" field is at maximum field size already
 	    let newtxt= newtxt.field.sep
 	   endif
-"	   call Decho("newtxt<".newtxt.">")
+"	   call Decho("Pass".pass.": newtxt<".newtxt.">")
 	  endif	" pass 1/2
 
 	  " bgnfield indexes to end of separator at right of current field
@@ -716,11 +745,10 @@ fun! Align#Align(...) range
 
 	if pass == 2
 	 " Write altered line to buffer
-"     call Decho("bgntxt<".bgntxt."> line=".line)
-"     call Decho("newtxt<".newtxt.">")
-"     call Decho("endtxt<".endtxt.">")
-     let junk = cursor(line,1)
-	 exe "norm! 0DA".bgntxt.newtxt.endtxt."\<Esc>"
+"     call Decho("Pass".pass.": bgntxt<".bgntxt."> line=".line)
+"     call Decho("Pass".pass.": newtxt<".newtxt.">")
+"     call Decho("Pass".pass.": endtxt<".endtxt.">")
+	 call setline(line,bgntxt.newtxt.endtxt)
 	endif
 
     let line = line + 1
@@ -728,6 +756,7 @@ fun! Align#Align(...) range
 
    let pass= pass + 1
   endwhile	" pass loop
+"  call Decho("end of two pass loop")
 
   " Restore user options
   let &et    = etkeep
@@ -783,18 +812,18 @@ endfun
 " AlignPop: this command/function pops an alignment pattern from a stack {{1
 "           and into the AlignCtrl variables.
 fun! Align#AlignPop()
-"  call Dfunc("AlignPop()")
+"  call Dfunc("Align#AlignPop()")
 
   " sanity checks
   if !exists("s:AlignCtrlStackQty")
    echoerr "AlignPush needs to be used prior to AlignPop"
-"   call Dret("AlignPop")
+"   call Dret("Align#AlignPop <> : AlignPush needs to have been called first")
    return ""
   endif
   if s:AlignCtrlStackQty <= 0
    unlet s:AlignCtrlStackQty
    echoerr "AlignPush needs to be used prior to AlignPop"
-"   call Dret("AlignPop")
+"   call Dret("Align#AlignPop <> : AlignPop needs to have been called first")
    return ""
   endif
 
@@ -817,11 +846,11 @@ fun! Align#AlignPop()
   else
    call Align#AlignCtrl('v')
   endif
-  unlet s:AlignVPat_{s:AlignCtrlStackQty}
 
+  unlet s:AlignVPat_{s:AlignCtrlStackQty}
   let s:AlignCtrlStackQty= s:AlignCtrlStackQty - 1
 
-"  call Dret("AlignPop : AlignCtrlStack_".s:AlignCtrlStackQty+1."<".retval.">")
+"  call Dret("Align#AlignPop <".retval."> : AlignCtrlStackQty=".s:AlignCtrlStackQty)
   return retval
 endfun
 
