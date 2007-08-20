@@ -101,9 +101,9 @@ set cpo&vim
 
 " ---------------------------------------------------------------------
 " Public Interface: {{{1
-com! -bang -range -nargs=* Align <line1>,<line2>call Align#Align(<bang>0,<f-args>)
+com! -bang -range -nargs=* Align <line1>,<line2>call Align#Align(<bang>0,<q-args>)
 com!       -range -nargs=0 AlignReplaceQuotedSpaces <line1>,<line2>call Align#AlignReplaceQuotedSpaces()
-com!              -nargs=* AlignCtrl call Align#AlignCtrl(<f-args>)
+com!              -nargs=* AlignCtrl call Align#AlignCtrl(<q-args>)
 com!              -nargs=0 AlignPush call Align#AlignPush()
 com!              -nargs=0 AlignPop  call Align#AlignPop()
 

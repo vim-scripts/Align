@@ -1,7 +1,7 @@
 " Align: tool to align multiple fields based on one or more separators
 "   Author:		Charles E. Campbell, Jr.
-"   Date:		Aug 16, 2007
-"   Version:	31
+"   Date:		Aug 20, 2007
+"   Version:	32
 " GetLatestVimScripts: 294 1 :AutoInstall: Align.vim
 " GetLatestVimScripts: 1066 1 cecutil.vim
 " Copyright:    Copyright (C) 1999-2005 Charles E. Campbell, Jr. {{{1
@@ -97,17 +97,17 @@
 if exists("g:loaded_align") || &cp
  finish
 endif
-let g:loaded_align = "v31"
+let g:loaded_align = "v32"
 let s:keepcpo      = &cpo
 set cpo&vim
 
-" debugging support
+" ---------------------------------------------------------------------
+" Debugging Support:
 "if !exists("g:loaded_Decho") "Decho
 " runtime plugin/Decho.vim
 "endif	" Decho
 
 " ---------------------------------------------------------------------
-
 " AlignCtrl: enter alignment patterns here {{{1
 "
 "   Styles   =  all alignment-break patterns are equivalent
@@ -162,16 +162,23 @@ fun! Align#AlignCtrl(...)
    let clearvmode= visualmode(1)
   endif
 
+  " set up a list akin to an argument list
   if a:0 > 0
-   let style = a:1
+   let A= s:QArgSplitter(a:1)
+  else
+   let A=[0]
+  endif
+
+  if A[0] > 0
+   let style = A[1]
 
    " Check for bad separator patterns (zero-length matches)
    " (but zero-length patterns for g/v is ok)
    if style !~# '[gv]'
     let ipat= 2
-    while ipat <= a:0
-     if "" =~ a:{ipat}
-      echoerr "AlignCtrl: separator<".a:{ipat}."> matches zero-length string"
+    while ipat <= A[0]
+     if "" =~ A[ipat]
+      echoerr "AlignCtrl: separator<".A[ipat]."> matches zero-length string"
 	  let &ic= keep_ic
 "      call Dret("AlignCtrl")
       return
@@ -181,7 +188,7 @@ fun! Align#AlignCtrl(...)
    endif
   endif
 
-"  call Decho("AlignCtrl() a:0=".a:0)
+"  call Decho("AlignCtrl() A[0]=".A[0])
   if !exists("s:AlignStyle")
    let s:AlignStyle= "l"
   endif
@@ -195,7 +202,7 @@ fun! Align#AlignCtrl(...)
    let s:AlignLeadKeep= 'w'
   endif
 
-  if a:0 == 0
+  if A[0] == 0
    " ----------------------
    " List current selection
    " ----------------------
@@ -254,12 +261,12 @@ fun! Align#AlignCtrl(...)
    if style =~# "="
 "	call Decho("style case =: record list of equiv alignment patterns")
     let s:AlignCtrl  = '='
-	if a:0 >= 2
+	if A[0] >= 2
      let s:AlignPatQty= 1
-     let s:AlignPat_1 = a:2
+     let s:AlignPat_1 = A[2]
      let ipat         = 3
-     while ipat <= a:0
-      let s:AlignPat_1 = s:AlignPat_1.'\|'.a:{ipat}
+     while ipat <= A[0]
+      let s:AlignPat_1 = s:AlignPat_1.'\|'.A[ipat]
       let ipat         = ipat + 1
      endwhile
      let s:AlignPat_1= '\('.s:AlignPat_1.'\)'
@@ -270,11 +277,11 @@ fun! Align#AlignCtrl(...)
    elseif style =~# 'C'
 "	call Decho("style case C: cycle through alignment pattern(s)")
     let s:AlignCtrl  = 'C'
-	if a:0 >= 2
-     let s:AlignPatQty= a:0 - 1
+	if A[0] >= 2
+     let s:AlignPatQty= A[0] - 1
      let ipat         = 1
-     while ipat < a:0
-      let s:AlignPat_{ipat}= a:{ipat+1}
+     while ipat < A[0]
+      let s:AlignPat_{ipat}= A[ipat+1]
 "     call Decho("AlignCtrl<".s:AlignCtrl."> AlignQty=".s:AlignPatQty." AlignPat_".ipat."<".s:AlignPat_{ipat}.">")
       let ipat= ipat + 1
      endwhile
@@ -319,25 +326,25 @@ fun! Align#AlignCtrl(...)
    if style =~# 'g'
 	" first list item is a "g" selector pattern
 "	call Decho("style case g: global selector pattern")
-	if a:0 < 2
+	if A[0] < 2
 	 if exists("s:AlignGPat")
 	  unlet s:AlignGPat
 "	  call Decho("unlet s:AlignGPat")
 	 endif
 	else
-	 let s:AlignGPat= a:2
+	 let s:AlignGPat= A[2]
 "	 call Decho("s:AlignGPat<".s:AlignGPat.">")
 	endif
    elseif style =~# 'v'
 	" first list item is a "v" selector pattern
 "	call Decho("style case v: global selector anti-pattern")
-	if a:0 < 2
+	if A[0] < 2
 	 if exists("s:AlignVPat")
 	  unlet s:AlignVPat
 "	  call Decho("unlet s:AlignVPat")
 	 endif
 	else
-	 let s:AlignVPat= a:2
+	 let s:AlignVPat= A[2]
 "	 call Decho("s:AlignVPat<".s:AlignVPat.">")
 	endif
    endif
@@ -389,28 +396,35 @@ endfun
 fun! Align#Align(hasctrl,...) range
 "  call Dfunc("Align(hasctrl=".a:hasctrl.",...) a:0=".a:0)
 
+  " set up a list akin to an argument list
+  if a:0 > 0
+   let A= s:QArgSplitter(a:1)
+  else
+   let A=[0]
+  endif
+
   " if :Align! was used, then the first argument is (should be!) an AlignCtrl string
   " Note that any alignment control set this way will be temporary.
   let hasctrl= a:hasctrl
-  if a:hasctrl && a:0 >= 1
-"   call Decho("Align! : using a:1<".a:1."> for AlignCtrl")
-   if a:1 =~ '[gv]'
+  if a:hasctrl && A[0] >= 1
+"   call Decho("Align! : using A[1]<".A[1]."> for AlignCtrl")
+   if A[1] =~ '[gv]'
    	let hasctrl= hasctrl + 1
 	call Align#AlignCtrl('m')
-    call Align#AlignCtrl(a:1,a:2)
-"    call Decho("Align! : also using a:2<".a:2."> for AlignCtrl")
-   elseif a:1 !~ 'm'
-    call Align#AlignCtrl(a:1."m")
+    call Align#AlignCtrl(A[1],A[2])
+"    call Decho("Align! : also using A[2]<".A[2]."> for AlignCtrl")
+   elseif A[1] !~ 'm'
+    call Align#AlignCtrl(A[1]."m")
    else
-    call Align#AlignCtrl(a:1)
+    call Align#AlignCtrl(A[1])
    endif
   endif
 
   " Check for bad separator patterns (zero-length matches)
   let ipat= 1 + hasctrl
-  while ipat <= a:0
-   if "" =~ a:{ipat}
-	echoerr "Align: separator<".a:{ipat}."> matches zero-length string"
+  while ipat <= A[0]
+   if "" =~ A[ipat]
+	echoerr "Align: separator<".A[ipat]."> matches zero-length string"
 "    call Dret("Align")
 	return
    endif
@@ -423,9 +437,9 @@ fun! Align#Align(hasctrl,...) range
   let keep_report= &report
   set noic report=10000
 
-  if a:0 > hasctrl
+  if A[0] > hasctrl
   " Align will accept a list of separator regexps
-"   call Decho("a:0=".a:0.": accepting list of separator regexp")
+"   call Decho("A[0]=".A[0].": accepting list of separator regexp")
 
    if s:AlignCtrl =~# "="
    	"= : consider all separators to be equivalent
@@ -434,7 +448,7 @@ fun! Align#Align(hasctrl,...) range
     let s:AlignPat_1 = a:{1 + hasctrl}
     let s:AlignPatQty= 1
     let ipat         = 2 + hasctrl
-    while ipat <= a:0
+    while ipat <= A[0]
      let s:AlignPat_1 = s:AlignPat_1.'\|'.a:{ipat}
      let ipat         = ipat + 1
     endwhile
@@ -445,7 +459,7 @@ fun! Align#Align(hasctrl,...) range
     "c : cycle through alignment pattern(s)
 "    call Decho("AlignCtrl: cycle through alignment pattern(s)")
     let s:AlignCtrl  = 'C'
-    let s:AlignPatQty= a:0 - hasctrl
+    let s:AlignPatQty= A[0] - hasctrl
     let ipat         = 1
     while ipat <= s:AlignPatQty
      let s:AlignPat_{ipat}= a:{(ipat + hasctrl)}
@@ -895,6 +909,25 @@ fun! Align#AlignReplaceQuotedSpaces()
 endfun
 
 " ---------------------------------------------------------------------
+" s:QArgSplitter: to avoid \ processing by <f-args>, <q-args> is needed. {{{1
+" However, <q-args> doesn't split at all, so this one returns a list
+" with splits at all whitespace (only!), plus a leading length-of-list.
+" The resulting list:  qarglist[0] corresponds to a:0
+"                      qarglist[i] corresponds to a:{i}
+fun! s:QArgSplitter(qarg)
+"  call Dfunc("s:QArgSplitter(qarg<".a:qarg.">)")
+  let qarglist   = split(a:qarg)
+  let qarglistlen= len(qarglist)
+  let qarglist   = insert(qarglist,qarglistlen)
+"  call Dret("s:QArgSplitter ".string(qarglist))
+  return qarglist
+endfun
+
+" ---------------------------------------------------------------------
+" Set up default values: {{{1
+"call Decho("-- Begin AlignCtrl Initialization --")
+call Align#AlignCtrl("default")
+"call Decho("-- End AlignCtrl Initialization --")
 " Set up default values: {{{1
 call Align#AlignCtrl("default")
 

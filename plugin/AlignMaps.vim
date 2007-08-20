@@ -1,7 +1,7 @@
 " AlignMaps:   Alignment maps based upon <Align.vim>
 " Maintainer:  Dr. Charles E. Campbell, Jr. <Charles.Campbell@gsfc.nasa.gov>
-" Date:        May 24, 2007
-" Version:     36
+" Date:        Aug 20, 2007
+" Version:     38
 "
 " NOTE: the code herein needs vim 6.0 or later
 "                       needs <Align.vim> v6 or later
@@ -38,7 +38,7 @@
 if exists("g:loaded_alignmaps") || &cp
  finish
 endif
-let g:loaded_alignmaps = "v36"
+let g:loaded_alignmaps = "v38"
 let s:keepcpo          = &cpo
 set cpo&vim
 
