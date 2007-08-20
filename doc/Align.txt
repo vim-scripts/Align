@@ -1,4 +1,4 @@
-*align.txt*	The Alignment Tool			Aug 02, 2007
+*align.txt*	The Alignment Tool			Aug 18, 2007
 
 Author:  Charles E. Campbell, Jr.  <NdrOchip@ScampbellPfamily.AbizM>
 	  (remove NOSPAM from Campbell's email first)
@@ -157,6 +157,10 @@ Copyright: (c) 2004-2007 by Charles E. Campbell, Jr.	*Align-copyright*
 			ex. :%Align! p2P2 =
 <		      This will align all "=" in the file with two padding
 		      spaces on both sides of each "=" sign.
+		      NOTE ON PATTERNS:~
+		      Align and AlignCtrl use |<f-args>| to obtain their
+		      input patterns; hence, to get a \ you'll need to enter
+		      two backslashes: \\.
 
 	  AlignPush : this command/function pushes the current AlignCtrl
 	              state onto an internal stack. >
@@ -1151,6 +1155,9 @@ ALIGNMENT MAPS				*alignmaps* *align-maps*
 4. Alignment Tool History				*align-history* {{{1
 
 ALIGN HISTORY						{{{2
+	32 : Aug 18, 2007 * uses |<q-args>| instead of |<f-args>| plus a
+	                    custom argument splitter to allow patterns with
+			    backslashes to slide in unaltered.
 	31 : Aug 06, 2007 * :[range]Align! [AlignCtrl settings] pattern(s)
 	                    implemented.
 	30 : Feb 12, 2007 * now uses |setline()|
@@ -1207,6 +1214,9 @@ ALIGN HISTORY						{{{2
 	 9 : Jun 25, 2002 : implemented cyclic padding
 
 ALIGNMENT MAP HISTORY					*alignmap-history* {{{2
+	v38   Aug 18, 2007 : * \tt altered so that it works with the new
+	                       use of |<q-args>| plus a custom argument
+			       splitter
 	v36   Sep 27, 2006 : * AlignWrapperStart() now has tests that marks
 	                       y and z are not set
 	      May 15, 2007   * \anum and variants improved
