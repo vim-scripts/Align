@@ -1,7 +1,7 @@
 " Align: tool to align multiple fields based on one or more separators
 "   Author:		Charles E. Campbell, Jr.
-"   Date:		Mar 06, 2008
-"   Version:	33
+"   Date:		Oct 08, 2008
+"   Version:	34
 " GetLatestVimScripts: 294 1 :AutoInstall: Align.vim
 " GetLatestVimScripts: 1066 1 :AutoInstall: cecutil.vim
 " Copyright:    Copyright (C) 1999-2007 Charles E. Campbell, Jr. {{{1
@@ -24,19 +24,23 @@
 if exists("g:loaded_align") || &cp
  finish
 endif
-let g:loaded_align = "v33"
-let s:keepcpo      = &cpo
+let g:loaded_align = "v34"
+if v:version < 700
+ echohl WarningMsg
+ echo "***warning*** this version of Align needs vim 7.0"
+ echohl Normal
+ finish
+endif
+let s:keepcpo= &cpo
 set cpo&vim
 "DechoTabOn
 
 " ---------------------------------------------------------------------
 " Debugging Support:
-"if !exists("g:loaded_Decho") "Decho
-" runtime plugin/Decho.vim
-"endif	" Decho
+"if !exists("g:loaded_Decho") | runtime plugin/Decho.vim | endif
 
 " ---------------------------------------------------------------------
-" AlignCtrl: enter alignment patterns here {{{1
+" Align#AlignCtrl: enter alignment patterns here {{{1
 "
 "   Styles   =  all alignment-break patterns are equivalent
 "            C  cycle through alignment-break pattern(s)
@@ -135,6 +139,9 @@ fun! Align#AlignCtrl(...)
    " ----------------------
    " List current selection
    " ----------------------
+   if !exists("s:AlignPatQty")
+	let s:AlignPatQty= 0
+   endif
    echo "AlignCtrl<".s:AlignCtrl."> qty=".s:AlignPatQty." AlignStyle<".s:AlignStyle."> Padding<".s:AlignPrePad."|".s:AlignPostPad."> LeadingWS=".s:AlignLeadKeep." AlignSep=".s:AlignSep
 "   call Decho("AlignCtrl<".s:AlignCtrl."> qty=".s:AlignPatQty." AlignStyle<".s:AlignStyle."> Padding<".s:AlignPrePad."|".s:AlignPostPad."> LeadingWS=".s:AlignLeadKeep." AlignSep=".s:AlignSep)
    if      exists("s:AlignGPat") && !exists("s:AlignVPat")
@@ -308,7 +315,7 @@ fun! Align#AlignCtrl(...)
 endfun
 
 " ---------------------------------------------------------------------
-" MakeSpace: returns a string with spacecnt blanks {{{1
+" s:MakeSpace: returns a string with spacecnt blanks {{{1
 fun! s:MakeSpace(spacecnt)
 "  call Dfunc("MakeSpace(spacecnt=".a:spacecnt.")")
   let str      = ""
@@ -448,8 +455,8 @@ fun! Align#Align(hasctrl,...) range
 "  call Decho("lines[".begline.",".endline."] col[".begcol.",".endcol."] ragged=".ragged." AlignCtrl<".s:AlignCtrl.">")
 
   " Keep user options
-  let etkeep   = &et
-  let pastekeep= &paste
+  let etkeep   = &l:et
+  let pastekeep= &l:paste
   setlocal et paste
 
   " convert selected range of lines to use spaces instead of tabs
@@ -735,8 +742,8 @@ fun! Align#Align(hasctrl,...) range
 "  call Decho("end of two pass loop")
 
   " Restore user options
-  let &et    = etkeep
-  let &paste = pastekeep
+  let &l:et    = etkeep
+  let &l:paste = pastekeep
 
   if exists("s:DoAlignPop")
    " AlignCtrl Map support
@@ -754,7 +761,7 @@ fun! Align#Align(hasctrl,...) range
 endfun
 
 " ---------------------------------------------------------------------
-" AlignPush: this command/function pushes an alignment control string onto a stack {{{1
+" Align#AlignPush: this command/function pushes an alignment control string onto a stack {{{1
 fun! Align#AlignPush()
 "  call Dfunc("AlignPush()")
 
@@ -788,7 +795,7 @@ fun! Align#AlignPush()
 endfun
 
 " ---------------------------------------------------------------------
-" AlignPop: this command/function pops an alignment pattern from a stack {{1
+" Align#AlignPop: this command/function pops an alignment pattern from a stack {{{1
 "           and into the AlignCtrl variables.
 fun! Align#AlignPop()
 "  call Dfunc("Align#AlignPop()")
@@ -834,7 +841,7 @@ fun! Align#AlignPop()
 endfun
 
 " ---------------------------------------------------------------------
-" AlignReplaceQuotedSpaces: {{{1
+" Align#AlignReplaceQuotedSpaces: {{{1
 fun! Align#AlignReplaceQuotedSpaces() 
 "  call Dfunc("AlignReplaceQuotedSpaces()")
 
@@ -957,7 +964,7 @@ endfun
 
 " ---------------------------------------------------------------------
 " s:Strlen: this function returns the length of a string, even if its {{{1
-"           using two-byte etc characters.  Depends on virtcol().
+"           using two-byte etc characters.
 "           Currently, its only used if g:Align_xstrlen is set to a
 "           nonzero value.  Solution from Nicolai Weibull, vim docs
 "           (:help strlen()), Tony Mechelynck, and my own invention.
