@@ -83,7 +83,7 @@ fun! SaveWinPosn(...)
    return ""
   endif
   let so_keep   = &l:so
-  let siso_keep = &l:siso
+  let siso_keep = &siso
   let ss_keep   = &l:ss
   setlocal so=0 siso=0 ss=0
 
@@ -114,9 +114,9 @@ fun! SaveWinPosn(...)
    let b:cecutil_winposn{b:cecutil_iwinposn}= savedposn
   endif
 
-  let &l:so   = so_keep
-  let &l:siso = siso_keep
-  let &l:ss   = ss_keep
+  let &l:so = so_keep
+  let &siso = siso_keep
+  let &l:ss = ss_keep
 
 "  if exists("b:cecutil_iwinposn")	 " Decho
 "   call Decho("b:cecutil_winpos{".b:cecutil_iwinposn."}[".b:cecutil_winposn{b:cecutil_iwinposn}."]")
@@ -129,6 +129,8 @@ endfun
 
 " ---------------------------------------------------------------------
 " RestoreWinPosn: {{{2
+"      call RestoreWinPosn()
+"      call RestoreWinPosn(winposn)
 fun! RestoreWinPosn(...)
 "  call Dfunc("RestoreWinPosn() a:0=".a:0)
 "  call Decho("getline(1)<".getline(1).">")
