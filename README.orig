@@ -1,7 +1,5 @@
-This is a mirror of http://www.vim.org/scripts/script.php?script_id=3467
-
-I wrote this script to help write verilog files that were compatible with my 
-company's coding standard.
+-----------------------------------------
+DESCRIPTION
 
 This script shifts the character under the cursor to a defined point. It can
 thus be used to align the *right* side of code to beautify or to confirm to
@@ -62,3 +60,23 @@ following.
 9   PORT_T_02     (port_t_02aaa   ), // Comment 8
 10  PORT_T_03     (port_t_03aaaa  ), // Comment 9
 
+-----------------------------------------
+RUNNING THE SCRIPT
+
+Put the script in some folder (lets say $ALIGN)
+add this to your ~/.vimrc
+
+source $ALIGN/align.vim
+
+
+-----------------------------------------
+KNOWN ISSUES AND LIMITATIONS
+
+* One line can only contain one occurrence of the special alignment point.
+  Otherwise the script might be confused.
+* Will only insert spaces. Will never delete spaces to align "backwards".
+
+-----------------------------------------
+If you have any questions or comments, please feel free to email with "VIM
+SCRIPT ALIGN" in the subject:
+zohair dot ahmad at gmail dot com
